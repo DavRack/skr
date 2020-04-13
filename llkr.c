@@ -1,16 +1,27 @@
 #include <stdio.h>
+#include <time.h>
 #include <libinput.h>
 #include <libudev.h>
 #include <libevdev/libevdev.h>
 #include <time.h>
 #include <string.h>
 #include <unistd.h>
-int main(){
-    const short largo_ev = 24;
+#include<fcntl.h> 
+int sendEvent(struct input_event event){
+    FILE *fp = popen("sudo uinput -d /dev/input/event3","w");
+    //recibe un evento y lo envia por medio del teclado solicitado
+    //teclado por defecto es event3 
+    //ecribe stdin con el contenido de event a uinput
+    fwrite(&event,1,sizeof(event),fp);
+    pclose(fp);
 
-    struct timeval test;
-    test.tv_sec = 1886657291;
-    test.tv_usec = 967109;
+    return 1;
+}
+
+int main(){
+    int f;
+    fcntl(f, F_SETFL, O_NONBLOCK);
+    const short largo_ev = 24;
 
     struct input_event dummy;
     // tipo de acción (tecla)
@@ -47,14 +58,24 @@ int main(){
 
     const char *command = "sudo uinput -d /dev/input/event3";
     const char *type = "w";
-/*
-    sleep(1);
-    fwrite(&dummy, sizeof(dummy), 1, stdout);
-    fwrite(&press, sizeof(press), 1, stdout);
-    fwrite(&d, sizeof(dummy), 1, stdout);
-    fwrite(&release, sizeof(release), 1, stdout);
-    sleep(1);
-    */
+
+    FILE * fp = fopen("/dev/input/event3","w");
+    //FILE * archivo;
+    int limit = 10;
+    
+    //archivo = freopen("/dev/input/event3","w",fp);
+    for(int i=0; i < limit; i++){
+        fwrite(&dummy,1,sizeof(dummy),fp);
+        fwrite(&press,1,sizeof(dummy),fp);
+        fwrite(&d,1,sizeof(dummy),fp);
+
+        fwrite(&dummy,1,sizeof(dummy),fp);
+        fwrite(&release,1,sizeof(dummy),fp);
+        fwrite(&d,1,sizeof(dummy),fp);
+        fflush(fp);
+        sleep(1);
+    }
+        fclose(fp);
     /*
 
        FILE *c = popen(command,type);
@@ -67,6 +88,7 @@ int main(){
        resultado = pclose(c);
        sleep(2);
        */
+    /*
     struct input_event event;
 
     setbuf(stdin, NULL), setbuf(stdout, NULL);
@@ -90,5 +112,6 @@ int main(){
             printf("value %d\n\n",event.value);
         
     }
+    */
 }
 

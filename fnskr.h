@@ -1,9 +1,28 @@
+#include <linux/input.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 # define BLANK -1
 # define TECLA_PRESIONADA 1
 # define TECLA_SOLTADA 0
 # define TECLA_MANTENIDA 2
 # define PATH_MAX 256
 
+
+int sendEvent(struct input_event event){
+    FILE *fp = popen("sudo uinput -d /dev/input/event3","w");
+    //recibe un evento y lo envia por medio del teclado solicitado
+    //teclado por defecto es event3 
+    //ecribe stdin con el contenido de event a uinput
+    fwrite(&event,1,sizeof(event),fp);
+    pclose(fp);
+
+    return 1;
+}
+int writeEvent(struct input_event event,FILE *target){
+    fwrite(&event,1,sizeof(event),target);
+    return 1;
+}
 // agregar elemento a array en la primera posicion bacia
 int append(int array[],int element){
     for(unsigned short i=0;i<8;i++){

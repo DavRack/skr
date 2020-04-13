@@ -1,36 +1,41 @@
 // Es necesario instalar los programas intercept yay -S interception-tools
-#include <stdio.h>
 #include <stdlib.h>
+#include <libevdev/libevdev.h>
+#include <libevdev/libevdev-uinput.h>
 #include <string.h>
-#include <linux/input.h>
+#include <stdio.h>
 #include "fnskr.h"
 int main(void) {
+    struct libevdev *dev = NULL;
+    int fd;
+    int rc = 1;
+
+    fd = fopen("/dev/input/event0", 00|01);
+    rc = libevdev_new_from_fd(fd, &dev);
+    if (rc < 0) {
+        fprintf(stderr, "Failed to init libevdev (%s)\n", strerror(-rc));
+        exit(1);
+    }
+    printf("Input device name: \"%s\"\n", libevdev_get_name(dev));
+    printf("Input device ID: bus %#x vendor %#x product %#x\n",
+            libevdev_get_id_bustype(dev),
+            libevdev_get_id_vendor(dev),
+            libevdev_get_id_product(dev));
 
     struct input_event event;
-    struct input_event event2;
-    struct input_event event3;
 
-    event2.value = 1;
-
-
-
-    event3.value = 1;
     int teclas[8]={BLANK,BLANK,BLANK,BLANK,BLANK,BLANK,BLANK,BLANK};
-    int pattern[8]={KEY_C,BLANK,BLANK,BLANK,BLANK,BLANK,BLANK,BLANK};
+    int pattern[8]={KEY_LEFTCTRL,KEY_C,BLANK,BLANK,BLANK,BLANK,BLANK,BLANK};
     int lastKey=BLANK;
-    FILE *pFile2 = fopen("/dev/input/event3", "w+");
-    char *test;
-    FILE *fp;
-    int status;
-    char path[PATH_MAX];
-                    
-                    
-    
+    FILE * target = fopen("/dev/input/event3","w");
 
     setbuf(stdin, NULL), setbuf(stdout, NULL);
 
     while (fread(&event, sizeof(event), 1, stdin) == 1) {
+            writeEvent(event,target);
         if (event.type == EV_KEY){
+            event.code = 30;
+            /*
             printf("%ld",event.time.tv_usec);
 
             if(event.value == TECLA_PRESIONADA){
@@ -64,7 +69,13 @@ int main(void) {
                     printf("Copiar!\n");
                 }
             }
+            */
         }
-        //fwrite(&event, sizeof(event), 1, stdout);
+        /*
+        else{
+        fwrite(&event, sizeof(event), 1, stdout);
+        }
+        */
     }
+    fclose(target);
 }
