@@ -1,2 +1,0 @@
-import libevdev
-print("ea")
