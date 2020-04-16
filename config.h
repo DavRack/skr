@@ -1,50 +1,7 @@
 #include "fnskr.h"
-struct keyRemap {
-    int from[8];
-    // to TIENE que ser diferente de 0
-    int to;
-};
 
-struct keyRemap remaps[256];
-
-int getFreeRemaps(){
-    // retorna el indice de la primera posición vacia en remaps
-    for(int i = 0; i < 256; i++){
-        if(remaps[i].to == 0){
-            return i;
-        }
-    }
-    return -1;
-}
-
-int mkKeyRemap(int from[], int to){
-    int pInRemaps = getFreeRemaps();
-
-    for(unsigned int i=0;i<8;i++){
-        remaps[pInRemaps].from[i]=from[i];
-    }
-
-    remaps[pInRemaps].to=to;
-
-    return 1;
-
-}
-int getMatchIndex(int teclas[]){
-    //retorna el indice en remaps[] del evento que contenga
-    //el patron teclas, si no se encuentra retorna -1
-    for(int i=0;i<256;i++){
-        if(remaps[i].to != 0){
-            if(find(teclas,remaps[i].from) == 1){
-                return i;
-            }
-        }
-        else{
-            return -1;
-        }
-    }
-    return -1;
-}
 int makeRemaps(){
+    // Definir todos los keymaps dentro de esta funcion
     int f[8];
 
     f[0] = 58; // remapear CapsLock
