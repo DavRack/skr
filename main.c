@@ -18,8 +18,7 @@
  */
 #include "config.h"
 
-/*
- * ######## Como funciona el envio de teclas: ########
+/* ######## Como funciona el envio de teclas: ########
  * cada key_stroke esta compuesto por 3 eventos
  * un evento per se envuelto entre dos eventos especiales
  *
@@ -35,7 +34,6 @@
  *
  *      (Fin envoltorio) ------------------> rap2
  *
- *
  * ######## Como funciona una estructura input_event ########
  * Una estructura input_event está compuesta (para nuestro proposito)
  * de los siguientes valores
@@ -45,16 +43,12 @@
  *      code  = numero de la tecla presionada: (code = 30) -> KEY_A
  *      value = tipo evento de tecla 0=soltada 1=presionada 2=mantenida
  * }
- *
  */
 
 int main(){
     // ruta absoluta al teclado que se va a usar
     // este archivo debe tener permisos 666
     //const char * ruta = "/dev/input/event3";
-
-    //se usa el comando intercept para obtener los eventos
-    //generados por el teclado especificado
 
     // Se asignan lo valores para el primer evento especial rap1
     rap1.type = 4;
@@ -66,58 +60,49 @@ int main(){
     rap2.code = 0;
     rap2.value = 0;
 
+    //se usa el comando intercept para obtener los eventos
+    //generados por el teclado especificado
+    input = popen("sudo intercept -g /dev/input/event3","r");
+
     // se asigna el teclado en la ruta especificada al teclado
     teclado = popen("sudo uinput -d /dev/input/event3","w");
 
-    // teclas guarda la o las teclas presionadas en el momento
-    int teclas[8]={BLANK,BLANK,BLANK,BLANK,BLANK,BLANK,BLANK,BLANK};
-
     makeRemaps();
-
-    int eventoEnviado;
-
-    setbuf(stdin, NULL), setbuf(stdout, NULL);
 
     // Ciclo principal de la aplicación!
     // se lee cada evento generado por el teclado
-
-    while (fread(&ev, sizeof(event), 1, stdin) == 1) {
+    while (fread(&ev, sizeof(event), 1, input) == 1) {
         if(ev.type == EV_KEY){
-            eventoEnviado = -1;
+            remapEnviado = -1;
 
             if(ev.value == TECLA_PRESIONADA){
                 append(teclas,ev.code);
-                eventoEnviado = getMatchIndex(teclas);
-                if(eventoEnviado != -1){
-                    sendKeyEvent(remaps[eventoEnviado].to,TECLA_PRESIONADA);
+                remapEnviado = getMatchIndex(teclas);
+                if(remapEnviado != -1){
+                    sendKeyEvent(remaps[remapEnviado].to,TECLA_PRESIONADA);
                 }
             }
 
             else if(ev.value == TECLA_SOLTADA){
-                eventoEnviado = getMatchIndex(teclas);
-                if(eventoEnviado != -1){
-                    sendKeyEvent(remaps[eventoEnviado].to,TECLA_SOLTADA);
+                remapEnviado = getMatchIndex(teclas);
+                if(remapEnviado != -1){
+                    sendKeyEvent(remaps[remapEnviado].to,TECLA_SOLTADA);
                 }
                 pop(teclas,ev.code);
             }
 
             else if(ev.value == TECLA_MANTENIDA){
-                eventoEnviado = getMatchIndex(teclas);
-                if(eventoEnviado != -1){
-                    sendKeyEvent(remaps[eventoEnviado].to,TECLA_MANTENIDA);
+                remapEnviado = getMatchIndex(teclas);
+                if(remapEnviado != -1){
+                    sendKeyEvent(remaps[remapEnviado].to,TECLA_MANTENIDA);
                 }
             }
 
-            if(eventoEnviado == -1){
+            if(remapEnviado == -1){
                 sendKeyEvent(ev.code,ev.value);
             }
         }
     }
 }
-/*
- * TODO:
- * - eleminar la necesidad de usar stdin al ejecutar el programa
- * - buscar una forma de medir el rendimiento desde c
- * - separar las definiciones de variables en otro archivo
- */
-
+ // TODO:
+ // - buscar una forma de medir el rendimiento desde c

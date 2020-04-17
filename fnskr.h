@@ -1,7 +1,3 @@
-#include <linux/input.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "definitions.h"
 
 int append(int array[],int element){

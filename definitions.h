@@ -33,3 +33,9 @@ FILE *input;
 
 // Al archivo teclado se escriben los eventos
 FILE *teclado;
+
+// Indice del evento recien eviado 
+int remapEnviado;
+
+// teclas guarda la o las teclas presionadas en el momento
+int teclas[8]={BLANK,BLANK,BLANK,BLANK,BLANK,BLANK,BLANK,BLANK};
