@@ -5,7 +5,13 @@
 #include <time.h>
 #include <unistd.h>
 
-/* Archivo con las definiciones de:
+/* En el archivo definitions.h se encuentran las definiciones de
+ * las estructuras de datos para:
+ *      - Remapeo de teclas
+ *      - Lanzamiento de scripts
+ *      - Capas
+ *
+ * En el archivo config.h se encuentran las definiciones del usuario de:
  *      - Remapeo de teclas
  *      - Lanzamiento de scripts
  *      - Capas
@@ -78,8 +84,6 @@ int main(){
     while (fread(&ev, sizeof(event), 1, stdin) == 1) {
         if(ev.type == EV_KEY){
             eventoEnviado = -1;
-            // tecla presionada
-            // agregar tecla a teclas
 
             if(ev.value == TECLA_PRESIONADA){
                 append(teclas,ev.code);
@@ -88,17 +92,16 @@ int main(){
                     sendKeyEvent(remaps[eventoEnviado].to,TECLA_PRESIONADA);
                 }
             }
+
             else if(ev.value == TECLA_SOLTADA){
-                // tecla soltada
-                // quitar tecla de teclas
                 eventoEnviado = getMatchIndex(teclas);
                 if(eventoEnviado != -1){
                     sendKeyEvent(remaps[eventoEnviado].to,TECLA_SOLTADA);
                 }
                 pop(teclas,ev.code);
             }
+
             else if(ev.value == TECLA_MANTENIDA){
-                // tecla mantenida
                 eventoEnviado = getMatchIndex(teclas);
                 if(eventoEnviado != -1){
                     sendKeyEvent(remaps[eventoEnviado].to,TECLA_MANTENIDA);

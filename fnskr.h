@@ -2,30 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-# define BLANK -1
-# define TRUE 1
-# define FALSE 0
-
-# define EV_SIZE 24
-
-# define TECLA_MANTENIDA 2
-# define TECLA_PRESIONADA 1
-# define TECLA_SOLTADA 0
-
-// al archivo teclado se escriben los eventos
-FILE * teclado;
-
-struct input_event rap1; //inicio de evento
-struct input_event rap2; //finalización de evento
-struct input_event event; // plantilla para enviar un evento press
-struct input_event ev; 
-
-struct keyRemap {
-    int from[8];
-    int to; // to TIENE que ser diferente de 0
-};
-
-struct keyRemap remaps[256];
+#include "definitions.h"
 
 int append(int array[],int element){
     // Agregar elemento,"element", en la primera posicion vacia de array
@@ -131,7 +108,6 @@ int getFreeRemaps(){
 
     return -1;
 }
-
 int mkKeyRemap(int from[], int to){
     // Popula la primera posicion vacia del array remaps con from y to
     

@@ -4,7 +4,7 @@
 #include <libevdev/libevdev-uinput.h>
 #include <string.h>
 #include <stdio.h>
-
+// coment
 int main(void) {
     struct input_event event;
 
