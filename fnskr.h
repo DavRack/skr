@@ -104,24 +104,48 @@ int getFreeRemaps(){
 
     return -1;
 }
-int mkKeyRemap(int from[], int to){
+int getFreeScripts(){   
+    for(int i = 0; i < 256; i++){
+        if(scripts[i].to == 0){
+            return i;
+        }
+    }
+    return -1;
+}
+int mkKeyRemap(int from, int to){
     // Popula la primera posicion vacia del array remaps con from y to
     
     // Se consigue la primera posicion vacia del array remaps
-    int pInRemaps = getFreeRemaps();
+    int pVacia = getFreeRemaps();
 
-    // se popula el vector from de la estructura
-    // en la posicion vacia del array remaps
-    for(unsigned int i=0;i<8;i++){
-        remaps[pInRemaps].from[i]=from[i];
-    }
+    remaps[pVacia].from=from;
 
-    remaps[pInRemaps].to=to;
+    remaps[pVacia].to=to;
 
     return TRUE;
 
 }
-int getMatchIndex(int teclas[]){
+int mkScriptLaunch(int from[8],char *to, int onAction){
+    // Popula la primera posicion vacia del array scripts con
+    // from, to y onAction
+
+    int pVacia = getFreeScripts();
+
+    // se popula el vector from de la estructura
+    // en la posicion vacia del array remaps
+    for(unsigned int i=0;i<8;i++){
+        scripts[pVacia].from[i]=from[i];
+    }
+
+    // Se popula el "string" to
+    scripts[pVacia].to = (char *) malloc(sizeof(to));
+    strcpy(scripts[pVacia].to,to);
+
+    scripts[pVacia].onAction = onAction;
+
+    return TRUE;
+}
+int getRemapsIndex(int keyCode){
     // Retorna el indice en remaps[] del evento que contenga
     // el patron teclas.
     // si no se encuentra retorna -1
@@ -132,9 +156,37 @@ int getMatchIndex(int teclas[]){
         // es decir; elemtos "no vacios"
         if(remaps[i].to != 0){
 
+            if(remaps[i].from == keyCode){
+
+                // se retorna el indice de dicho elemnto
+                return i;
+            }
+        }
+
+        // si se encuentra un elemnto vacio, se retorna -1 para
+        // evitar que se recorra el resto de la lista
+        else{
+            return -1;
+        }
+    }
+
+    // si se llega al final de la lista sin encontrar un match
+    return -1;
+}
+int getScriptsIndex(int teclas[]){
+    // Retorna el indice en scripts[] del evento que contenga
+    // el patron teclas.
+    // si no se encuentra retorna -1
+
+    for(int i = 0; i < 256; i++){
+
+        // Se itera sobre los elemtos que tienen un "to" diferente a 0
+        // es decir; elemtos "no vacios"
+        if(scripts[i].to != 0){
+
             // Si el las teclas presionadas (teclas) coinciden
             // con el patron del elemento a remapear
-            if(find(teclas,remaps[i].from) == 1){
+            if(find(teclas,scripts[i].from) == 1){
 
                 // se retorna el indice de dicho elemnto
                 return i;
@@ -187,4 +239,38 @@ int sendKeyEvent(int KEY,int tipo){
     sendEvent(event,teclado);
     
     return 1;
+}
+int sendScript(int indiceScript){
+    // Recibe el indice de un evento en scripts
+    // y envia el script especificado en scripts[].to
+    popen(scripts[indiceScript].to,"w");
+    return TRUE;
+}
+int doAction(int teclas[],int keyCode,int keyAction){
+    
+    // Remapear tecla
+    remapEnviado = getRemapsIndex(keyCode);
+
+    if(remapEnviado != -1){
+        sendKeyEvent(remaps[remapEnviado].to,keyAction);
+        return TRUE;
+    }
+
+    // Enviar script
+    scriptEnviado = getScriptsIndex(teclas);
+
+    if(scriptEnviado != -1){ 
+        if (scripts[scriptEnviado].onAction == keyAction){
+            sendScript(scriptEnviado);
+        }
+        return TRUE;
+    }
+
+    // Enviar tecla
+    if(remapEnviado == -1){
+        sendKeyEvent(keyCode,keyAction);
+        return TRUE;
+    }
+
+    return FALSE;
 }

@@ -1,10 +1,4 @@
-#include <libevdev/libevdev.h>
-#include <libinput.h>
-#include <libudev.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h>
-
+#include "config.h"
 /* En el archivo definitions.h se encuentran las definiciones de
  * las estructuras de datos para:
  *      - Remapeo de teclas
@@ -16,21 +10,17 @@
  *      - Lanzamiento de scripts
  *      - Capas
  */
-#include "config.h"
-
 /* ######## Como funciona el envio de teclas: ########
  * cada key_stroke esta compuesto por 3 eventos
  * un evento per se envuelto entre dos eventos especiales
  *
  *      (Inicio envoltorio) ---------------> rap1
  *
- *
  *                                 +-------> (evento press)
  *                                 |               
  *                  (event)  -> ---+-------> (evento release)
  *                                 |               
  *                                 +-------> (evento repeat)
- *
  *
  *      (Fin envoltorio) ------------------> rap2
  *
@@ -68,41 +58,31 @@ int main(){
     teclado = popen("sudo uinput -d /dev/input/event3","w");
 
     makeRemaps();
+    makeScripts();
 
     // Ciclo principal de la aplicación!
     // se lee cada evento generado por el teclado
     while (fread(&ev, sizeof(event), 1, input) == 1) {
         if(ev.type == EV_KEY){
             remapEnviado = -1;
+            scriptEnviado = -1;
 
             if(ev.value == TECLA_PRESIONADA){
                 append(teclas,ev.code);
-                remapEnviado = getMatchIndex(teclas);
-                if(remapEnviado != -1){
-                    sendKeyEvent(remaps[remapEnviado].to,TECLA_PRESIONADA);
-                }
+                doAction(teclas,ev.code,ev.value);
             }
 
             else if(ev.value == TECLA_SOLTADA){
-                remapEnviado = getMatchIndex(teclas);
-                if(remapEnviado != -1){
-                    sendKeyEvent(remaps[remapEnviado].to,TECLA_SOLTADA);
-                }
+                doAction(teclas,ev.code,ev.value);
                 pop(teclas,ev.code);
             }
 
             else if(ev.value == TECLA_MANTENIDA){
-                remapEnviado = getMatchIndex(teclas);
-                if(remapEnviado != -1){
-                    sendKeyEvent(remaps[remapEnviado].to,TECLA_MANTENIDA);
-                }
-            }
-
-            if(remapEnviado == -1){
-                sendKeyEvent(ev.code,ev.value);
+                doAction(teclas,ev.code,ev.value);
             }
         }
     }
 }
  // TODO:
  // - buscar una forma de medir el rendimiento desde c
+ // - combinar getScriptsIndex y getRemapsIndex en una sola funcion
