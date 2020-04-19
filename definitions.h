@@ -13,6 +13,15 @@
 # define TECLA_PRESIONADA 1
 # define TECLA_SOLTADA 0
 
+struct actionToDo {
+
+    int type; // 0 = normal, 1 = remap, 2 = sendScript, 3 = layers
+    int index;
+    int keyState;
+};
+
+struct actionToDo toDo;
+
 // Define la estructura de un remapeo de una tecla
 struct keyRemap {
     // Patron de keycodes
@@ -20,7 +29,10 @@ struct keyRemap {
     int to; // to TIENE que ser diferente de 0
 };
 
-// Defina la estructura de mapeo de una combinación de teclas
+// Lista con todos los remaps definidos por el usuario
+struct keyRemap remaps[256];
+
+// Define la estructura de mapeo de una combinación de teclas
 // a un comando o script
 struct scripLaunch {
     int from[8];
@@ -34,16 +46,21 @@ struct scripLaunch {
     char *to;
 };
 
+// Lista con todos los remaps definidos por el usuario
+struct scripLaunch scripts[256];
+
+struct functionLayer {
+    int fnKey;
+    struct keyRemap remaps[256];
+};
+
+// Lista con todas las capas de funcion definidas por el usuario
+struct functionLayer layers[32];
+
 struct input_event rap1; // Inicio de evento
 struct input_event rap2; // Finalización de evento
 struct input_event event; // Plantilla para enviar un evento KEY
 struct input_event ev; // Evento leido de la entrada cruda del teclado
-
-// Lista con todos los remaps definidos por el usuario
-struct keyRemap remaps[256];
-
-// Lista con todos los remaps definidos por el usuario
-struct scripLaunch scripts[256];
 
 // De input se leen los eventos de teclado
 FILE *input;
@@ -56,6 +73,9 @@ int remapEnviado;
 
 // Indice del script recien eviado 
 int scriptEnviado;
+
+// Indice de la capa enviada 
+int capaActivada;
 
 // teclas guarda la o las teclas presionadas en el momento
 int teclas[8]={BLANK,BLANK,BLANK,BLANK,BLANK,BLANK,BLANK,BLANK};

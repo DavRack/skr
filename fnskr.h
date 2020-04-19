@@ -21,6 +21,12 @@ int in(int array[], int element){
     }
     return FALSE;
 }
+int cpyList(int form[], int to[]){
+    // copia las listas eliminando los espacios entre keycodes
+
+
+    return TRUE;
+}
 int pop(int array[],int element){
     /* Elimina el elemento ,"element", del array
      * en este contexto "eliminar" es cambiar dicho elemento
@@ -52,6 +58,21 @@ int printList(int array[]){
         printf("%d ",array[i]);
     }
     printf("\n");
+    return TRUE;
+}
+int popFirst(int destino[], int origen[]){
+
+    short index = 0;
+    for(short i = 1; i < 8; i++){
+        if(origen[i] > 0){
+            destino[index] = origen[i];
+            index++;
+        }
+    }
+    for(int i = index; i < 8; i++){
+        destino[i] = BLANK;
+    }
+
     return TRUE;
 }
 int find(int array[],int pattern[]){
@@ -112,6 +133,15 @@ int getFreeScripts(){
     }
     return -1;
 }
+int setNewLayer(int fnKey){
+    for(int i = 0; i < 32; i++){
+        if(layers[i].fnKey == 0){
+            layers[i].fnKey = fnKey;
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
 int mkKeyRemap(int from, int to){
     // Popula la primera posicion vacia del array remaps con from y to
     
@@ -144,6 +174,26 @@ int mkScriptLaunch(int from[8],char *to, int onAction){
     scripts[pVacia].onAction = onAction;
 
     return TRUE;
+}
+int getLastLayer(){
+    int index = -1;
+    for(int i = 0; i < 32; i++){
+        if(layers[i].fnKey > 0){
+            index = i;
+        }else{return index;}
+    }
+    return index;
+}
+int mkLayerKeyRemap(int from, int to){
+    int index = getLastLayer();
+    for(int i=0; i < 256; i++){
+        if(layers[index].remaps[i].to == 0){
+            layers[index].remaps[i].from = from;
+            layers[index].remaps[i].to = to;
+            return TRUE;
+        }
+    }
+    return FALSE;
 }
 int getRemapsIndex(int keyCode){
     // Retorna el indice en remaps[] del evento que contenga
@@ -203,6 +253,14 @@ int getScriptsIndex(int teclas[]){
     // si se llega al final de la lista sin encontrar un match
     return -1;
 }
+int getLayerIndex(int teclas[8]){
+    for(int i = 0; i < 32; i++){
+        if(layers[i].fnKey == teclas[0]){
+            return i;
+        }
+    }
+    return -1;
+}
 int sendEvent(struct input_event evento, FILE * kb){
     // Recibe un evento y lo envia por medio del teclado solicitado
 
@@ -235,7 +293,7 @@ int sendKeyEvent(int KEY,int tipo){
     event.code = KEY;
     event.value = tipo;
 
-    // Se efectua la escritura al teclado
+    // Se efectua la escritdiy coffee machineura al teclado
     sendEvent(event,teclado);
     
     return 1;
@@ -246,31 +304,89 @@ int sendScript(int indiceScript){
     popen(scripts[indiceScript].to,"w");
     return TRUE;
 }
-int doAction(int teclas[],int keyCode,int keyAction){
+struct actionToDo getAction(int teclas[],int keyCode,int keyState){
+
+    struct actionToDo action;
     
     // Remapear tecla
     remapEnviado = getRemapsIndex(keyCode);
 
-    if(remapEnviado != -1){
-        sendKeyEvent(remaps[remapEnviado].to,keyAction);
-        return TRUE;
+    if(remapEnviado != BLANK){
+        action.type = 1;
+        action.index = remapEnviado;
+        action.keyState = keyState;
+        return action;
     }
 
     // Enviar script
     scriptEnviado = getScriptsIndex(teclas);
 
-    if(scriptEnviado != -1){ 
-        if (scripts[scriptEnviado].onAction == keyAction){
-            sendScript(scriptEnviado);
-        }
-        return TRUE;
+    if(scriptEnviado != BLANK){ 
+        //if (scripts[scriptEnviado].onAction == keyState){
+        action.type = 2;
+        action.index = scriptEnviado;
+        action.keyState = keyState;
+        //}
+        return action;
+    }
+
+    // Activar capa
+    capaActivada = getLayerIndex(teclas);
+
+    if(capaActivada != BLANK){
+        action.type = 3;
+        action.index = capaActivada;
+        action.keyState = keyState;
+        return action;
     }
 
     // Enviar tecla
-    if(remapEnviado == -1){
-        sendKeyEvent(keyCode,keyAction);
-        return TRUE;
+    if(remapEnviado == BLANK){
+        action.type = 0;
+        action.index = keyCode;
+        action.keyState = keyState;
+        return action;
     }
 
+    action.type = -1;
+    action.index = 0;
+    action.keyState = keyState;
+    return action;
+
+}
+int doAction(struct actionToDo action, int teclas[8]){
+    // se manipula ev
+
+    if(action.type == 0){
+        sendKeyEvent(action.index,action.keyState);
+        return TRUE;
+    }
+    else if(action.type == 1){
+        sendKeyEvent(remaps[action.index].to,action.keyState);
+        return TRUE;
+    }
+    else if(action.type == 2){
+        if(action.keyState == scripts[action.index].onAction){
+            sendScript(action.index);
+            return TRUE;
+        }
+    }
+    else if(action.type == 3){
+        struct functionLayer layer = layers[action.index];
+        int keyState = action.keyState;
+        int teclasSinFnKey[8];
+
+        popFirst(teclasSinFnKey,teclas);
+
+        if(teclasSinFnKey[0] != -1){
+            for(int i = 0; i < 256; i++){
+                if(layer.remaps[i].from == teclasSinFnKey[0]){
+                    sendKeyEvent(layer.remaps[i].to,keyState);
+                    return TRUE;
+                }
+            }
+        }
+
+    }
     return FALSE;
 }

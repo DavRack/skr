@@ -59,27 +59,33 @@ int main(){
 
     makeRemaps();
     makeScripts();
+    makeLayers();
 
     // Ciclo principal de la aplicación!
     // se lee cada evento generado por el teclado
     while (fread(&ev, sizeof(event), 1, input) == 1) {
         if(ev.type == EV_KEY){
-            remapEnviado = -1;
-            scriptEnviado = -1;
+
+            // se inicializa el evento a realizar
+            toDo.type = -1;
+            toDo.index = -1;
+            toDo.keyState = -1;
 
             if(ev.value == TECLA_PRESIONADA){
                 append(teclas,ev.code);
-                doAction(teclas,ev.code,ev.value);
+                toDo = getAction(teclas,ev.code,ev.value);
+                doAction(toDo,teclas);
             }
-
             else if(ev.value == TECLA_SOLTADA){
-                doAction(teclas,ev.code,ev.value);
+                toDo = getAction(teclas,ev.code,ev.value);
+                doAction(toDo,teclas);
                 pop(teclas,ev.code);
             }
-
             else if(ev.value == TECLA_MANTENIDA){
-                doAction(teclas,ev.code,ev.value);
+                toDo = getAction(teclas,ev.code,ev.value);
+                doAction(toDo,teclas);
             }
+            
         }
     }
 }
