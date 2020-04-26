@@ -5,12 +5,6 @@ int makeRemaps(){
 
     mkKeyRemap(15,1); // a ESC
 
-    mkKeyRemap(102,2);
-
-    mkKeyRemap(104,4);
-
-    mkKeyRemap(109,9);
-
     return TRUE;
 }
 
@@ -26,16 +20,26 @@ int makeScripts(){
     f[6] = BLANK;
     f[7] = BLANK;
 
-    mkScriptLaunch(f,"st&",TECLA_SOLTADA);
+    mkScriptLaunch(f,"alacritty&",TECLA_SOLTADA);
 
     return TRUE;
 }
 
 int makeLayers(){
     setNewLayer(58);
+    
     mkLayerKeyRemap(35,105);
     mkLayerKeyRemap(36,108);
     mkLayerKeyRemap(37,103);
     mkLayerKeyRemap(38,106);
+    mkLayerKeyRemap(57,15);
+
+
+    mkLayerKeyRemap(42,42);
+    mkLayerKeyRemap(29,29);
+    mkLayerKeyRemap(56,56);
+    mkLayerKeyRemap(100,100);
+    mkLayerKeyRemap(54,54);
+
     return TRUE;
 }

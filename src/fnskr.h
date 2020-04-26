@@ -1,34 +1,28 @@
 #include "definitions.h"
 
-int append(int array[],int element){
+int * append(int array[],int element){
     // Agregar elemento,"element", en la primera posicion vacia de array
 
     for(unsigned short i = 0; i < 8; i++){
         if(array[i] == BLANK){
             array[i] = element;
-            return TRUE;
+            return array;
         }
     }
-    return FALSE;
+    return array;
 }
 int in(int array[], int element){
     // Retorna TRUE si element está en array
 
     for(unsigned short i = 0; i < 8; i++){
-        if(array[0] == element) { 
+        if(array[i] == element) { 
             return TRUE;
         }
     }
     return FALSE;
 }
-int cpyList(int form[], int to[]){
-    // copia las listas eliminando los espacios entre keycodes
-
-
-    return TRUE;
-}
-int pop(int array[],int element){
-    /* Elimina el elemento ,"element", del array
+int * pop(int array[],int element){
+    /* Elimina la primera instancia del elemento ,"element", del array
      * en este contexto "eliminar" es cambiar dicho elemento
      * por -1, BLANK
      */
@@ -36,20 +30,20 @@ int pop(int array[],int element){
     for(unsigned short i = 0; i < 8; i++){
         if(array[i] == element){
             array[i] = BLANK;
-            return TRUE;
+            return array;
         }
     }
 
-    return FALSE;
+    return array;
 }
-int clear(int array[]){
+int * clear(int array[]){
     // Restablece el array a una lista de BLANK
 
     for(unsigned short i = 0; i < 8; i++){
         array[i] = BLANK;
     }
 
-    return TRUE;
+    return array;
 }
 int printList(int array[]){
     // Imprime la lista de keycodes array en una sola linea de texto 
@@ -60,9 +54,11 @@ int printList(int array[]){
     printf("\n");
     return TRUE;
 }
-int popFirst(int destino[], int origen[]){
-
+int * popFirst(int origen[]){
     short index = 0;
+    int * destino;
+    destino = (int*) malloc(sizeof(int) * 8);
+
     for(short i = 1; i < 8; i++){
         if(origen[i] > 0){
             destino[index] = origen[i];
@@ -73,7 +69,7 @@ int popFirst(int destino[], int origen[]){
         destino[i] = BLANK;
     }
 
-    return TRUE;
+    return destino;
 }
 int find(int array[],int pattern[]){
     /* Busca si las teclas presionadas (array)
@@ -133,6 +129,14 @@ int getFreeScripts(){
     }
     return -1;
 }
+int getFreeLayer(){
+    for(int i=0;i<32;i++){
+        if(layers[i].fnKey == 0){
+            return i;
+        }
+    }
+    return -1;
+}
 int setNewLayer(int fnKey){
     for(int i = 0; i < 32; i++){
         if(layers[i].fnKey == 0){
@@ -147,31 +151,33 @@ int mkKeyRemap(int from, int to){
     
     // Se consigue la primera posicion vacia del array remaps
     int pVacia = getFreeRemaps();
+    if(pVacia >= 0){
 
-    remaps[pVacia].from=from;
+        remaps[pVacia].from=from;
+        remaps[pVacia].to=to;
+    }
 
-    remaps[pVacia].to=to;
-
-    return TRUE;
-
+    return pVacia;
 }
 int mkScriptLaunch(int from[8],char *to, int onAction){
     // Popula la primera posicion vacia del array scripts con
     // from, to y onAction
 
     int pVacia = getFreeScripts();
+    if(pVacia >= 0){
 
-    // se popula el vector from de la estructura
-    // en la posicion vacia del array remaps
-    for(unsigned int i=0;i<8;i++){
-        scripts[pVacia].from[i]=from[i];
+        // se popula el vector from de la estructura
+        // en la posicion vacia del array remaps
+        for(unsigned int i=0;i<8;i++){
+            scripts[pVacia].from[i]=from[i];
+        }
+
+        // Se popula el "string" to
+        scripts[pVacia].to = (char *) malloc(sizeof(to));
+        strcpy(scripts[pVacia].to,to);
+
+        scripts[pVacia].onAction = onAction;
     }
-
-    // Se popula el "string" to
-    scripts[pVacia].to = (char *) malloc(sizeof(to));
-    strcpy(scripts[pVacia].to,to);
-
-    scripts[pVacia].onAction = onAction;
 
     return TRUE;
 }
@@ -190,10 +196,10 @@ int mkLayerKeyRemap(int from, int to){
         if(layers[index].remaps[i].to == 0){
             layers[index].remaps[i].from = from;
             layers[index].remaps[i].to = to;
-            return TRUE;
+            return index;
         }
     }
-    return FALSE;
+    return index;
 }
 int getRemapsIndex(int keyCode){
     // Retorna el indice en remaps[] del evento que contenga
@@ -212,7 +218,6 @@ int getRemapsIndex(int keyCode){
                 return i;
             }
         }
-
         // si se encuentra un elemnto vacio, se retorna -1 para
         // evitar que se recorra el resto de la lista
         else{
@@ -255,13 +260,13 @@ int getScriptsIndex(int teclas[]){
 }
 int getLayerIndex(int teclas[8]){
     for(int i = 0; i < 32; i++){
-        if(layers[i].fnKey == teclas[0]){
+        if(in(teclas,layers[i].fnKey)){
             return i;
         }
     }
     return -1;
 }
-int sendEvent(struct input_event evento, FILE * kb){
+int sendEvent(struct input_event evento, FILE * kb){ // no testeada!
     // Recibe un evento y lo envia por medio del teclado solicitado
 
     // Se envía el primer envoltorio
@@ -279,7 +284,7 @@ int sendEvent(struct input_event evento, FILE * kb){
 
     return 1;
 }
-int sendKeyEvent(int KEY,int tipo){
+int sendKeyEvent(int KEY,int tipo){ // no testeada!!
     /*
      * Prepara un evento para ser enviado por medio de la funcion sendEvent
      *  recibe:
@@ -298,16 +303,33 @@ int sendKeyEvent(int KEY,int tipo){
     
     return 1;
 }
-int sendScript(int indiceScript){
+int sendScript(int indiceScript){ // no testeada!!
     // Recibe el indice de un evento en scripts
     // y envia el script especificado en scripts[].to
     popen(scripts[indiceScript].to,"w");
     return TRUE;
 }
 struct actionToDo getAction(int teclas[],int keyCode,int keyState){
-
     struct actionToDo action;
     
+    // Activar capa
+    capaActivada = getLayerIndex(teclas);
+
+    if(capaActivada != BLANK){
+        if(layers[capaActivada].fnKey == teclas[0]){
+            action.type = 3;
+            action.index = capaActivada;
+            action.keyState = keyState;
+            return action;
+        }
+        else if(keyCode == layers[capaActivada].fnKey){
+            action.type = BLANK;
+            action.index = BLANK;
+            action.keyState = keyState;
+            return action;
+        }
+    }
+
     // Remapear tecla
     remapEnviado = getRemapsIndex(keyCode);
 
@@ -322,39 +344,21 @@ struct actionToDo getAction(int teclas[],int keyCode,int keyState){
     scriptEnviado = getScriptsIndex(teclas);
 
     if(scriptEnviado != BLANK){ 
-        //if (scripts[scriptEnviado].onAction == keyState){
         action.type = 2;
         action.index = scriptEnviado;
-        action.keyState = keyState;
-        //}
-        return action;
-    }
-
-    // Activar capa
-    capaActivada = getLayerIndex(teclas);
-
-    if(capaActivada != BLANK){
-        action.type = 3;
-        action.index = capaActivada;
         action.keyState = keyState;
         return action;
     }
 
     // Enviar tecla
-    if(remapEnviado == BLANK){
-        action.type = 0;
-        action.index = keyCode;
-        action.keyState = keyState;
-        return action;
-    }
-
-    action.type = -1;
-    action.index = 0;
+    action.type = 0;
+    action.index = keyCode;
     action.keyState = keyState;
     return action;
 
+    return action;
 }
-int doAction(struct actionToDo action, int teclas[8]){
+int doAction(struct actionToDo action, int teclas[8],struct input_event ev){
     // se manipula ev
 
     if(action.type == 0){
@@ -374,18 +378,20 @@ int doAction(struct actionToDo action, int teclas[8]){
     else if(action.type == 3){
         struct functionLayer layer = layers[action.index];
         int keyState = action.keyState;
-        int teclasSinFnKey[8];
+        int *teclasSinFnKey;
 
-        popFirst(teclasSinFnKey,teclas);
+        teclasSinFnKey=popFirst(teclas);
 
         if(teclasSinFnKey[0] != -1){
             for(int i = 0; i < 256; i++){
-                if(layer.remaps[i].from == teclasSinFnKey[0]){
+                if(layer.remaps[i].from == ev.code){
                     sendKeyEvent(layer.remaps[i].to,keyState);
                     return TRUE;
                 }
             }
         }
+
+        free(teclasSinFnKey);
 
     }
     return FALSE;

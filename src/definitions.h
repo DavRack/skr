@@ -14,7 +14,6 @@
 # define TECLA_SOLTADA 0
 
 struct actionToDo {
-
     int type; // 0 = normal, 1 = remap, 2 = sendScript, 3 = layers
     int index;
     int keyState;

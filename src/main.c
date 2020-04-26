@@ -74,16 +74,16 @@ int main(){
             if(ev.value == TECLA_PRESIONADA){
                 append(teclas,ev.code);
                 toDo = getAction(teclas,ev.code,ev.value);
-                doAction(toDo,teclas);
+                doAction(toDo,teclas,ev);
             }
             else if(ev.value == TECLA_SOLTADA){
                 toDo = getAction(teclas,ev.code,ev.value);
-                doAction(toDo,teclas);
+                doAction(toDo,teclas,ev);
                 pop(teclas,ev.code);
             }
             else if(ev.value == TECLA_MANTENIDA){
                 toDo = getAction(teclas,ev.code,ev.value);
-                doAction(toDo,teclas);
+                doAction(toDo,teclas,ev);
             }
             
         }
@@ -92,3 +92,5 @@ int main(){
  // TODO:
  // - buscar una forma de medir el rendimiento desde c
  // - combinar getScriptsIndex y getRemapsIndex en una sola funcion
+ // - agregar funcion de enviar multiples teclas de la lista de teclas en capas
+ //
