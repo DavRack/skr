@@ -1,192 +1,61 @@
-#include "definitions.h"
+#include "arrayFunctions.h"
 
-int * append(int array[],int element){
-    // Agregar elemento,"element", en la primera posicion vacia de array
-
-    for(unsigned short i = 0; i < 8; i++){
-        if(array[i] == BLANK){
-            array[i] = element;
-            return array;
-        }
-    }
-    return array;
-}
-int in(int array[], int element){
-    // Retorna TRUE si element está en array
-
-    for(unsigned short i = 0; i < 8; i++){
-        if(array[i] == element) { 
-            return TRUE;
-        }
-    }
-    return FALSE;
-}
-int * pop(int array[],int element){
-    /* Elimina la primera instancia del elemento ,"element", del array
-     * en este contexto "eliminar" es cambiar dicho elemento
-     * por -1, BLANK
-     */
-
-    for(unsigned short i = 0; i < 8; i++){
-        if(array[i] == element){
-            array[i] = BLANK;
-            return array;
-        }
-    }
-
-    return array;
-}
-int * clear(int array[]){
-    // Restablece el array a una lista de BLANK
-
-    for(unsigned short i = 0; i < 8; i++){
-        array[i] = BLANK;
-    }
-
-    return array;
-}
-int printList(int array[]){
-    // Imprime la lista de keycodes array en una sola linea de texto 
-
-    for(unsigned short i = 0; i < 8; i++){
-        printf("%d ",array[i]);
-    }
-    printf("\n");
-    return TRUE;
-}
-int * popFirst(int origen[]){
-    short index = 0;
-    int * destino;
-    destino = (int*) malloc(sizeof(int) * 8);
-
-    for(short i = 1; i < 8; i++){
-        if(origen[i] > 0){
-            destino[index] = origen[i];
-            index++;
-        }
-    }
-    for(int i = index; i < 8; i++){
-        destino[i] = BLANK;
-    }
-
-    return destino;
-}
-int find(int array[],int pattern[]){
-    /* Busca si las teclas presionadas (array)
-    * son las mismas que las teclas espeficadas en el remapeo
-    *
-    * Si las listas son iguales retorna TRUE
-    * Si las listas son diferentes retorna FALSE
-    *
-    * Es posible que el array de teclas presionadas tenga 
-    * espacios, "BLANK", entre las teclas
-    * Ej:
-    *      {BLANK,29,BLANK,BLANK,30,BLANK,BLANK,BLANK}
-    *
-    * por lo tanto primero se genera un array donde todos los keycodes
-    * sean consecutivos
-    *      
-    *      {29,30,BLANK,BLANK,BLANK,BLANK,BLANK,BLANK}
-    *
-    * en auxList se guardan la lista de keycodes consecutivos
-    */ 
-    int auxList[8]={BLANK,BLANK,BLANK,BLANK,BLANK,BLANK,BLANK,BLANK};
-
-    for(unsigned short i=0;i<8;i++){
-
-        // Para cada elemnto no vacio de la lista de teclas se agrega
-        // dicho elemento a la primera posición vacia de auxList 
-        if(array[i] != BLANK){
-            append(auxList,array[i]);
-        }
-    }
-
-    // Si las listas son diferentes en cualquier posición se retorna FALSE 
-    for(unsigned short i = 0; i < 8; i++){
-        if(pattern[i] != auxList[i]){
-            return FALSE;
-        }
-    }
-    return TRUE;
-}
 int getFreeRemaps(){
     // Retorna el indice de la primera posición vacia en remaps
     // Si no se encuentra ninguna posición vacía se retorna -1
-
-    for(int i = 0; i < 256; i++){
-        if(remaps[i].to == 0){
+    for(int i = 0; i < 256; i++)
+        if(remaps[i].to == 0)
             return i;
-        }
-    }
-
     return -1;
 }
 int getFreeScripts(){   
-    for(int i = 0; i < 256; i++){
-        if(scripts[i].to == 0){
+    for(int i = 0; i < 256; i++)
+        if(scripts[i].to == 0)
             return i;
-        }
-    }
     return -1;
 }
 int getFreeLayer(){
-    for(int i=0;i<32;i++){
-        if(layers[i].fnKey == 0){
+    for(int i=0;i<32;i++)
+        if(layers[i].fnKey == 0)
             return i;
-        }
-    }
     return -1;
 }
 int setNewLayer(int fnKey){
-    for(int i = 0; i < 32; i++){
-        if(layers[i].fnKey == 0){
-            layers[i].fnKey = fnKey;
-            return TRUE;
-        }
+    int index = getFreeLayer();
+    if (index >= 0){
+        layers[index].fnKey = fnKey;
+        return TRUE;
     }
-    return FALSE;
+    else return FALSE;
 }
 int mkKeyRemap(int from, int to){
     // Popula la primera posicion vacia del array remaps con from y to
-    
-    // Se consigue la primera posicion vacia del array remaps
     int pVacia = getFreeRemaps();
     if(pVacia >= 0){
-
         remaps[pVacia].from=from;
         remaps[pVacia].to=to;
     }
-
     return pVacia;
 }
 int mkScriptLaunch(int from[8],char *to, int onAction){
     // Popula la primera posicion vacia del array scripts con
     // from, to y onAction
-
     int pVacia = getFreeScripts();
     if(pVacia >= 0){
-
         // se popula el vector from de la estructura
         // en la posicion vacia del array remaps
-        for(unsigned int i=0;i<8;i++){
-            scripts[pVacia].from[i]=from[i];
-        }
-
-        // Se popula el "string" to
-        scripts[pVacia].to = (char *) malloc(sizeof(to));
+        for(unsigned int i=0;i<8;i++){scripts[pVacia].from[i]=from[i];}
+        scripts[pVacia].to = (char *) malloc(sizeof(*to));
         strcpy(scripts[pVacia].to,to);
-
         scripts[pVacia].onAction = onAction;
     }
-
     return TRUE;
 }
 int getLastLayer(){
     int index = -1;
     for(int i = 0; i < 32; i++){
-        if(layers[i].fnKey > 0){
-            index = i;
-        }else{return index;}
+        if(layers[i].fnKey > 0){index = i;}
+        else{return index;}
     }
     return index;
 }
@@ -202,106 +71,40 @@ int mkLayerKeyRemap(int from, int to){
     return index;
 }
 int getRemapsIndex(int keyCode){
-    // Retorna el indice en remaps[] del evento que contenga
-    // el patron teclas.
+    // Retorna el indice en remaps[] del evento que contenga el patron teclas.
     // si no se encuentra retorna -1
-
-    for(int i = 0; i < 256; i++){
-
-        // Se itera sobre los elemtos que tienen un "to" diferente a 0
-        // es decir; elemtos "no vacios"
-        if(remaps[i].to != 0){
-
-            if(remaps[i].from == keyCode){
-
-                // se retorna el indice de dicho elemnto
-                return i;
-            }
-        }
-        // si se encuentra un elemnto vacio, se retorna -1 para
-        // evitar que se recorra el resto de la lista
-        else{
-            return -1;
-        }
-    }
-
-    // si se llega al final de la lista sin encontrar un match
+    for(int i = 0; i < 256; i++)
+        if(remaps[i].from == keyCode)
+            return i;
     return -1;
 }
 int getScriptsIndex(int teclas[]){
-    // Retorna el indice en scripts[] del evento que contenga
-    // el patron teclas.
+    // Retorna el indice en scripts[] del evento que contenga el patron teclas.
     // si no se encuentra retorna -1
-
     for(int i = 0; i < 256; i++){
-
-        // Se itera sobre los elemtos que tienen un "to" diferente a 0
-        // es decir; elemtos "no vacios"
-        if(scripts[i].to != 0){
-
-            // Si el las teclas presionadas (teclas) coinciden
-            // con el patron del elemento a remapear
-            if(find(teclas,scripts[i].from) == 1){
-
-                // se retorna el indice de dicho elemnto
-                return i;
-            }
-        }
-
-        // si se encuentra un elemnto vacio, se retorna -1 para
-        // evitar que se recorra el resto de la lista
-        else{
-            return -1;
-        }
+        if(find(teclas,scripts[i].from))
+            return i;
     }
-
-    // si se llega al final de la lista sin encontrar un match
     return -1;
 }
 int getLayerIndex(int teclas[8]){
-    for(int i = 0; i < 32; i++){
-        if(in(teclas,layers[i].fnKey)){
+    for(int i = 0; i < 32; i++)
+        if(in(teclas,layers[i].fnKey))
             return i;
-        }
-    }
     return -1;
 }
-int sendEvent(struct input_event evento, FILE * kb){ // no testeada!
+void sendEvent(struct input_event evento, FILE * teclado){ // no testeada!
     // Recibe un evento y lo envia por medio del teclado solicitado
-
-    // Se envía el primer envoltorio
-    fwrite(&rap1,1,EV_SIZE,kb);
-
-    // se envia el evento perse
-    fwrite(&evento,1,EV_SIZE,kb);
-
-    // Se envía el primer envoltorio
-    fwrite(&rap2,1,EV_SIZE,kb);
-
-    // Se ejecuta fflush para "guardar" los cambios realizados y 
-    // que estos cambios tengan efecto
-    fflush(kb);
-
-    return 1;
+    fwrite(&rap1,1,EV_SIZE,teclado);// Se envía el primer envoltorio
+    fwrite(&evento,1,EV_SIZE,teclado);// se envia el evento perse
+    fwrite(&rap2,1,EV_SIZE,teclado);// Se envía el primer envoltorio
+    fflush(teclado);
 }
-int sendKeyEvent(int KEY,int tipo){ // no testeada!!
-    /*
-     * Prepara un evento para ser enviado por medio de la funcion sendEvent
-     *  recibe:
-     *           KEY     -> Número de la tecla
-     *          tipo    -> 0=soltada, 1=presionada, 2=mantenida
-     */
-
-    // se idica que event es de tipo KEY
+void sendKeyEvent(int KEY,int tipo){ // no testeada!!
     event.type=EV_KEY;
-
     event.code = KEY;
     event.value = tipo;
-
-    // Se efectua la escritdiy coffee machineura al teclado
     sendEvent(event,teclado);
-    
-    return 1;
 }
 int sendScript(int indiceScript){ // no testeada!!
     // Recibe el indice de un evento en scripts
@@ -311,10 +114,7 @@ int sendScript(int indiceScript){ // no testeada!!
 }
 struct actionToDo getAction(int teclas[],int keyCode,int keyState){
     struct actionToDo action;
-    
-    // Activar capa
     capaActivada = getLayerIndex(teclas);
-
     if(capaActivada != BLANK){
         if(layers[capaActivada].fnKey == teclas[0]){
             action.type = 3;
@@ -329,38 +129,26 @@ struct actionToDo getAction(int teclas[],int keyCode,int keyState){
             return action;
         }
     }
-
-    // Remapear tecla
     remapEnviado = getRemapsIndex(keyCode);
-
     if(remapEnviado != BLANK){
         action.type = 1;
         action.index = remapEnviado;
         action.keyState = keyState;
         return action;
     }
-
-    // Enviar script
     scriptEnviado = getScriptsIndex(teclas);
-
     if(scriptEnviado != BLANK){ 
         action.type = 2;
         action.index = scriptEnviado;
         action.keyState = keyState;
         return action;
     }
-
-    // Enviar tecla
     action.type = 0;
     action.index = keyCode;
     action.keyState = keyState;
     return action;
-
-    return action;
 }
 int doAction(struct actionToDo action, int teclas[8],struct input_event ev){
-    // se manipula ev
-
     if(action.type == 0){
         sendKeyEvent(action.index,action.keyState);
         return TRUE;
@@ -390,9 +178,7 @@ int doAction(struct actionToDo action, int teclas[8],struct input_event ev){
                 }
             }
         }
-
         free(teclasSinFnKey);
-
     }
     return FALSE;
 }

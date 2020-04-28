@@ -1,40 +1,4 @@
 #include "config.h"
-// En el archivo definitions.h se encuentran las definiciones de
-// las estructuras de datos para:
-//      - Remapeo de teclas
-//      - Lanzamiento de scripts
-//      - Capas
-//
-// En el archivo config.h se encuentran las definiciones del usuario de:
-//      - Remapeo de teclas
-//      - Lanzamiento de scripts
-//      - Capas
-//
-// ######## Como funciona el envio de teclas: ########
-// cada key_stroke esta compuesto por 3 eventos
-// un evento per se envuelto entre dos eventos especiales
-//
-//      (Inicio envoltorio) ---------------> rap1
-//
-//                                 +-------> (evento press)
-//                                 |               
-//                  (event)  -> ---+-------> (evento release)
-//                                 |               
-//                                 +-------> (evento repeat)
-//
-//      (Fin envoltorio) ------------------> rap2
-//
-// ######## Como funciona una estructura input_event ########
-// Una estructura input_event está compuesta (para nuestro proposito)
-// de los siguientes valores
-//
-// input event{
-//      type  = tipo de evento (cuando es un tecleo: type=EV_KEY)
-//      code  = numero de la tecla presionada: (code = 30) -> KEY_A
-//      value = tipo evento de tecla 0=soltada 1=presionada 2=mantenida
-// }
-//
-
 int main(){
     // ruta absoluta al teclado que se va a usar
     // este archivo debe tener permisos 666
@@ -61,8 +25,6 @@ int main(){
     makeScripts();
     makeLayers();
 
-    // Ciclo principal de la aplicación!
-    // se lee cada evento generado por el teclado
     while (fread(&ev, sizeof(event), 1, input) == 1) {
         if(ev.type == EV_KEY){
 
@@ -89,8 +51,3 @@ int main(){
         }
     }
 }
- // TODO:
- // - buscar una forma de medir el rendimiento desde c
- // - combinar getScriptsIndex y getRemapsIndex en una sola funcion
- // - agregar funcion de enviar multiples teclas de la lista de teclas en capas
- //

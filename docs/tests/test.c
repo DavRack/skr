@@ -85,7 +85,7 @@ int TS_clear(){
 }
 
 int T_popFirst(int input[],int output[]){
-    return arrEq(popFirst(input),output);
+    return eql(popFirst(input),output);
 }
 
 int TS_popFirst(){
@@ -141,6 +141,10 @@ int TS_find(){
     apnd(T_find(array,pattern,True),tp);
 
     arr(array,29,-1,-1,44,-1,-1,-1,-1);
+    arr(pattern,29,44,-1,-1,-1,-1,-1,-1);
+    apnd(T_find(array,pattern,True),tp);
+
+    arr(array,29,-1,-1,-1,-1,44,-1,-1);
     arr(pattern,29,44,-1,-1,-1,-1,-1,-1);
     apnd(T_find(array,pattern,True),tp);
 
@@ -650,9 +654,9 @@ int main(){
     f+=TS_mkScriptLaunch();
     f+=TS_pop();
     f+=TS_popFirst();
-    f+=TS_popFirst();
     f+=TS_setNewLayer();
 
     if(f == 0){printf("ALL OK\n");}
+    else{printf("Algunos test fallaron\n");}
 }
 
