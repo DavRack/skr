@@ -1,6 +1,6 @@
 # skr
 
-ALFA!
+*ALPHA!*
 
 una piesa de software que permite:
 
@@ -12,7 +12,9 @@ una piesa de software que permite:
 
 ## Limitaciones
 
-Si bien skr permite combinaciones de hasta 8 teclas el ["Key Rollover"](https://en.wikipedia.org/wiki/Rollover_%28key%29) del teclado puede limitar el número máximo de teclas reconocidas al mismo tiempo.
+Si bien skr permite combinaciones de hasta 8 teclas,
+el ["Key Rollover"](https://en.wikipedia.org/wiki/Rollover_%28key%29) del teclado
+puede limitar el número máximo de teclas reconocidas al mismo tiempo.
 
 Nota: Este software fue probado en ArchLinux con kernel 5.6.6-arch1-1
 
