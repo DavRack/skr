@@ -1,5 +1,7 @@
 # skr
 
+En esta rama se intenta consolidar remap, script, y macros en un solo struct.
+
 *ALPHA!*
 
 una piesa de software que permite:
