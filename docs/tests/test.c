@@ -634,11 +634,41 @@ int TS_getAction(){
 
     return analisis(tp,"getAction");
 }
+int T_eql(int arr1[], int arr2[]){
+    printf("%d\n",eql(arr1,arr2));
+    return eql(arr1,arr2) == arrEq(arr1,arr2);
+}
+int TS_eql(){
+    int tp[256];
+    init(tp);
+
+    int arr1[8];
+    int arr2[8];
+
+    arr(arr1,-1,-1,-1,-1,-1,-1,-1,-1);
+    arr(arr2,-1,-1,-1,-1,-1,-1,-1,-1);
+    apnd(T_eql(arr1,arr2),tp);
+
+    arr(arr1,2,-1,-1,-1,-1,-1,-1,-1);
+    arr(arr2,-1,-1,-1,-1,-1,-1,-1,-1);
+    apnd(T_eql(arr1,arr2),tp);
+
+    arr(arr1,99,-1,-1,-1,-1,-1,-1,-1);
+    arr(arr2,99,99,99,-1,-1,-1,-1,-1);
+    apnd(T_eql(arr1,arr2),tp);
+
+    arr(arr1,99,99,99,88,27,888,36,33);
+    arr(arr2,99,99,99,88,27,888,36,33);
+    apnd(T_eql(arr1,arr2),tp);
+
+    return analisis(tp,"eql");
+}
 int main(){
     int f = 0;
 
     f+=TS_append();
     f+=TS_clear();
+    f+=TS_eql();
     f+=TS_find();
     f+=TS_getAction();
     f+=TS_getFreeLayer();

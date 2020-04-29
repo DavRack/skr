@@ -1,9 +1,8 @@
 #include "definitions.h"
 int eql(int arr1[],int arr2[]){
-    for(int i = 0; i < 8; i++){
+    for(int i = 0; i < 8; i++)
         if(arr1[i] != arr2[i])
             return FALSE;
-    }
     return TRUE;
 }
 int getIndexInArray(int element,int array[]){

@@ -4,6 +4,8 @@ void makeRemaps(){
     // Definir todos los keymaps dentro de esta funcion
 
     mkKeyRemap(15,1); // Tab a ESC
+    mkKeyRemap(104,159); // Tab a ESC
+    mkKeyRemap(109,158); // Tab a ESC
 }
 
 void makeScripts(){
