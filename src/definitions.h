@@ -13,10 +13,10 @@
 #define TECLA_PRESIONADA 1
 #define TECLA_SOLTADA 0
 
-#define TYPE_NORMAL 0
-#define TYPE_MACRO  1
-#define TYPE_SCRIPT 2
-#define TYPE_LAYER  3
+#define TYPE_NORMAL   0
+#define TYPE_KEYREMAP 1
+#define TYPE_SCRIPT   2
+#define TYPE_MACRO    3
 
 #define NUMBER_OF_REMAPS 512
 #define NUMBER_OF_LAYERS 64
@@ -33,17 +33,20 @@ struct actionToDo toDo;
 typedef struct remap{
     int type;
     int onKeyState;
+    int keyRemap;
     int from[8];
     int macro[8];
     char *script;
 }remap;
 
 // Lista con todos los remaps definidos por el usuario
-remap remaps[NUMBER_OF_REMAPS];
+remap userRemaps[NUMBER_OF_REMAPS];
+
+remap auxRemap;
 
 typedef struct fnLayer {
     int fnKey;
-    remap remaps[NUMBER_OF_REMAPS];
+    remap fnRemaps[NUMBER_OF_REMAPS];
 }fnLayer;
 
 // Lista con todas las capas de funcion definidas por el usuario
@@ -52,7 +55,7 @@ fnLayer  layers[NUMBER_OF_LAYERS];
 struct input_event rap1; // Inicio de evento
 struct input_event rap2; // Finalización de evento
 struct input_event event; // Plantilla para enviar un evento KEY
-struct input_event ev; // Evento leido de la entrada cruda del teclado
+struct input_event rawEvent; // Evento leido de la entrada cruda del teclado
 
 // De input se leen los eventos de teclado
 FILE *input;

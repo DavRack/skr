@@ -65,3 +65,9 @@ int find(int array[],int pattern[]){
     removeSpaces(pattern);
     return eql(array,pattern);
 }
+int arrIsEmpty(int arr[]){
+    for(int i = 0; i <8; i++)
+        if(arr[i] != BLANK)
+            return FALSE;
+    return TRUE;
+}
