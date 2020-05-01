@@ -21,21 +21,15 @@
 #define NUMBER_OF_REMAPS 512
 #define NUMBER_OF_LAYERS 64
 
-struct actionToDo {
-    int type; 
-    int index;
-    int keyState;
-};
-
-struct actionToDo toDo;
-
 // Define la estructura de un remapeo de una tecla o combinación de teclas
 typedef struct remap{
+    int remapIsEmpty;
     int type;
+
     int onKeyState;
+    int hotKey;
     int keyRemap;
     int from[8];
-    int macro[8];
     char *script;
 }remap;
 
@@ -43,6 +37,9 @@ typedef struct remap{
 remap userRemaps[NUMBER_OF_REMAPS];
 
 remap auxRemap;
+remap blankRemap;
+
+remap toDo;
 
 typedef struct fnLayer {
     int fnKey;
