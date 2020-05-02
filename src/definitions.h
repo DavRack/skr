@@ -55,7 +55,7 @@ fnLayer layerActivada;
 fnLayer blankLayer;
 
 struct input_event rap1 = {{0},4,4,4}; // Inicio de evento
-struct input_event rap2 = {{0},0,0,0};; // Finalización de evento
+struct input_event rap2 = {{0},0,0,0}; // Finalización de evento
 struct input_event event; // Plantilla para enviar un evento KEY
 struct input_event rawEvent; // Evento leido de la entrada cruda del teclado
 
