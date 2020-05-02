@@ -68,6 +68,5 @@ FILE *teclado;
 // Indice del script recien eviado 
 int scriptEnviado;
 
-
 // teclas guarda la o las teclas presionadas en el momento
 int teclas[8]={BLANK,BLANK,BLANK,BLANK,BLANK,BLANK,BLANK,BLANK};
