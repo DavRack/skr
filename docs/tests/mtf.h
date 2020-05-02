@@ -1,5 +1,6 @@
 #include <stdio.h>
-#include "../../src/config.h"
+//#include "../../src/config.h"
+#include "../../src/fnskr.h"
 
 # define True 1
 # define False 0
@@ -103,28 +104,22 @@ int arrEq(int arr1[], int arr2[]){
     return True;
 }
 void fillRemapsUpTo(int index){
-    int from = 58;
-    int to = 15;
-
-    int dex = index;
-
-    if(dex == -1){
-        dex=256;
-        from = 0;
-        to = 0;
-    }
-
-    for(int i = 0; i <dex;i ++){
-       remaps[i].from = from;
-       remaps[i].to = to;
+    int from[8] = {11,22,33,44,55,66,77,88};
+    for(int i = 0; i <index;i ++){
+       arCpy(userRemaps[i].from,from);
     }
 }
-void clearRemaps(){
-    for(int i = 0; i < 256;i ++){
-       remaps[i].from = 0;
-       remaps[i].to = 0;
+void clearLayer(){
+    for(int i = 0; i < NUMBER_OF_LAYERS;i++){
+       layers[i].fnKey = 0;
     }
 }
+void fillLayerUpTo(int index){
+    for(int i = 0; i < index;i ++){
+       layers[i].fnKey = 58;
+    }
+}
+/*
 void fillScriptsUpTo(int index){
     for(int i = 0; i <index;i ++){
        scripts[i].to = "vacio";
@@ -141,16 +136,6 @@ void fillScriptsUpTo(int index){
 void clearScipts(){
     for(int i = 0; i < 256;i ++){
        scripts[i].to = 0;
-    }
-}
-void clearLayer(){
-    for(int i = 0; i < 32;i ++){
-       layers[i].fnKey = 0;
-    }
-}
-void fillLayerUpTo(int index){
-    for(int i = 0; i < index;i ++){
-       layers[i].fnKey = 32;
     }
 }
 int makeTestRemaps(){
@@ -193,4 +178,4 @@ int makeTestLayers(){
     mkLayerKeyRemap(57,15);
     return TRUE;
 }
-
+*/

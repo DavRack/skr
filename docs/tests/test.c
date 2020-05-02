@@ -3,7 +3,72 @@
 // TS -> test suite
 // T -> test individual
 
-// Test append
+int T_eql(int arr1[],int arr2[]){
+    return arrEq(arr1,arr2) == eql(arr1,arr2);
+}
+int TS_eql(){
+    int tp[256];
+    init(tp);
+
+    int arr1[8];
+    int arr2[8];
+
+    arr(arr1,-1,-1,-1,-1,-1,-1,-1,-1);
+    arr(arr2,-1,-1,-1,-1,-1,-1,-1,-1);
+    apnd(T_eql(arr1,arr2),tp);
+
+    arr(arr1,99,-1,-1,-1,-1,-1,-1,-1);
+    arr(arr2,-1,-1,-1,-1,-1,-1,-1,-1);
+    apnd(T_eql(arr1,arr2),tp);
+
+    arr(arr1,99,-1,-1,-1,55,-1,-1,-1);
+    arr(arr2,88,-1,-1,-1,55,-1,-1,99);
+    apnd(T_eql(arr1,arr2),tp);
+
+    arr(arr1,99,88,77,66,55,44,33,22);
+    arr(arr2,88,-1,-1,-1,55,-1,-1,99);
+    apnd(T_eql(arr1,arr2),tp);
+
+    return analisis(tp,"eql");
+}
+int T_getIndexInArray(int arr[],int element,int index){
+    return index == getIndexInArray(element,arr);
+}
+int TS_getIndexInArray(){
+    int tp[256];
+    init(tp);
+
+    int ar[8];
+    int element = 0;
+    int index = 0;
+
+    arr(ar,-1,-1,-1,-1,-1,-1,-1,-1);
+    element = 99;
+    index = -1;
+    apnd(T_getIndexInArray(ar,element,index),tp);
+
+    arr(ar,99,-1,-1,-1,-1,-1,-1,-1);
+    element = 99;
+    index = 0;
+    apnd(T_getIndexInArray(ar,element,index),tp);
+
+    arr(ar,-1,-1,-1,-1,-1,-1,-1,99);
+    element = 99;
+    index = 7;
+    apnd(T_getIndexInArray(ar,element,index),tp);
+
+    arr(ar,99,-1,-1,-1,-1,-1,-1,99);
+    element = 99;
+    index = 0;
+    apnd(T_getIndexInArray(ar,element,index),tp);
+
+    arr(ar,99,58,88,44,-1,-1,-1,99);
+    element = 44;
+    index = 3;
+    apnd(T_getIndexInArray(ar,element,index),tp);
+
+    return analisis(tp,"getIndexInArray");
+}
 int T_append(int array[], int element,int output[]){
     return arrEq(append(array,element),output);
 }
@@ -117,6 +182,35 @@ int TS_popFirst(){
 
     return analisis(tp,"popFirst");
 }
+int T_removeSpaces(int o[], int d[]){
+    removeSpaces(o);
+    return eql(o,d);
+}
+int TS_removeSpaces(){
+    int tp[256];
+    init(tp);
+
+    int i[8];
+    int d[8];
+    
+    arr(i,-1,-1,-1,-1,-1,-1,-1,-1);
+    arr(d,-1,-1,-1,-1,-1,-1,-1,-1);
+    apnd(T_removeSpaces(i,d),tp);
+    
+    arr(i,55,-1,66,77,-1,-1,-1,-1);
+    arr(d,55,66,77,-1,-1,-1,-1,-1);
+    apnd(T_removeSpaces(i,d),tp);
+    
+    arr(i,55,-1,66,77,88,99,11,22);
+    arr(d,55,66,77,88,99,11,22,-1);
+    apnd(T_removeSpaces(i,d),tp);
+    
+    arr(i,55,33,66,77,88,99,11,22);
+    arr(d,55,33,66,77,88,99,11,22);
+    apnd(T_removeSpaces(i,d),tp);
+
+    return analisis(tp,"removeSpaces");
+}
 
 int T_find(int array[],int pattern[],int output){
     return (find(array,pattern) == output);
@@ -170,46 +264,26 @@ int TS_getFreeRemap(){
     int tp[256];
     init(tp);
 
-    clearRemaps();
+    initRemaps();
     apnd(T_getFreeRemap(0),tp);
 
-    clearRemaps();
+    initRemaps();
     fillRemapsUpTo(1);
     apnd(T_getFreeRemap(1),tp);
 
-    clearRemaps();
+    initRemaps();
     fillRemapsUpTo(255);
     apnd(T_getFreeRemap(255),tp);
 
-    clearRemaps();
-    fillRemapsUpTo(256);
+    initRemaps();
+    fillRemapsUpTo(511);
+    apnd(T_getFreeRemap(511),tp);
+
+    initRemaps();
+    fillRemapsUpTo(512);
     apnd(T_getFreeRemap(-1),tp);
 
     return analisis(tp,"getFreeRemap");
-}
-int T_getFreeScripts(int index){
-    return (getFreeScripts() == index);
-}
-int TS_getFreeScripts(){
-    int tp[256];
-    init(tp);
-
-    clearScipts();
-    apnd(T_getFreeScripts(0),tp);
-
-    clearScipts();
-    fillScriptsUpTo(1);
-    apnd(T_getFreeScripts(1),tp);
-
-    clearScipts();
-    fillScriptsUpTo(255);
-    apnd(T_getFreeScripts(255),tp);
-
-    clearScipts();
-    fillScriptsUpTo(256);
-    apnd(T_getFreeScripts(-1),tp);
-
-    return analisis(tp,"getFreeScripts");
 }
 int T_getFreeLayer(int index){
     return (getFreeLayer() == index);
@@ -230,18 +304,18 @@ int TS_getFreeLayer(){
     apnd(T_getFreeLayer(31),tp);
 
     clearLayer();
-    fillLayerUpTo(32);
+    fillLayerUpTo(64);
     apnd(T_getFreeLayer(-1),tp);
 
     return analisis(tp,"getFreeLayer");
 }
 int T_setNewLayer(){
     int fnKey = 100;
-    struct functionLayer old[32];
+    fnLayer old[NUMBER_OF_LAYERS];
     memcpy(old,layers, sizeof(layers));
     int change = getFreeLayer();
     setNewLayer(fnKey);
-    for(int i = 0; i<32;i++){
+    for(int i = 0; i<NUMBER_OF_LAYERS;i++){
         if(old[i].fnKey != layers[i].fnKey){
             if(i != change || layers[i].fnKey != fnKey){
                 return False;
@@ -265,7 +339,36 @@ int TS_setNewLayer(){
     fillLayerUpTo(32);
     apnd(T_setNewLayer(),tp);
 
+    clearLayer();
+    fillLayerUpTo(64);
+    apnd(T_setNewLayer(),tp);
+
     return analisis(tp,"setNewLayer");
+}
+/*
+int T_getFreeScripts(int index){
+    return (getFreeScripts() == index);
+}
+int TS_getFreeScripts(){
+    int tp[256];
+    init(tp);
+
+    clearScipts();
+    apnd(T_getFreeScripts(0),tp);
+
+    clearScipts();
+    fillScriptsUpTo(1);
+    apnd(T_getFreeScripts(1),tp);
+
+    clearScipts();
+    fillScriptsUpTo(255);
+    apnd(T_getFreeScripts(255),tp);
+
+    clearScipts();
+    fillScriptsUpTo(256);
+    apnd(T_getFreeScripts(-1),tp);
+
+    return analisis(tp,"getFreeScripts");
 }
 int T_mkKeyRemap(){
     int from = 88;
@@ -548,11 +651,6 @@ int TS_getLayerIndex(){
 }
 int T_getAction(int teclas[],int keyCode,int keyState,struct actionToDo output){
     struct actionToDo r = getAction(teclas,keyCode,keyState);
-    /*
-    printf("%d\n",r.type);
-    printf("%d\n",r.index);
-    printf("%d\n",r.keyState);
-    */
 
     if(r.type != output.type){return False;}
     if(r.index != output.index){return False;}
@@ -663,29 +761,35 @@ int TS_eql(){
 
     return analisis(tp,"eql");
 }
+*/
 int main(){
-    int f = 0;
+int f = 0;
 
-    f+=TS_append();
-    f+=TS_clear();
-    f+=TS_eql();
-    f+=TS_find();
-    f+=TS_getAction();
-    f+=TS_getFreeLayer();
-    f+=TS_getFreeRemap();
-    f+=TS_getFreeScripts();
-    f+=TS_getLastLayer();
-    f+=TS_getLayerIndex();
-    f+=TS_getRemapsIndex();
-    f+=TS_getScriptsIndex();
-    f+=TS_in();
-    f+=TS_mkKeyRemap();
-    f+=TS_mkLayerKeyRemap();
-    f+=TS_mkScriptLaunch();
-    f+=TS_pop();
-    f+=TS_popFirst();
-    f+=TS_setNewLayer();
+f+=TS_eql();
+f+=TS_getIndexInArray();
+f+=TS_append();
+f+=TS_clear();
+f+=TS_removeSpaces();
+f+=TS_in();
+f+=TS_pop();
+f+=TS_popFirst();
+f+=TS_find();
 
+f+=TS_getFreeRemap();
+f+=TS_getFreeLayer();
+f+=TS_setNewLayer();
+
+/*
+f+=TS_getAction();
+f+=TS_getFreeScripts();
+f+=TS_getLastLayer();
+f+=TS_getLayerIndex();
+f+=TS_getRemapsIndex();
+f+=TS_getScriptsIndex();
+f+=TS_mkKeyRemap();
+f+=TS_mkLayerKeyRemap();
+f+=TS_mkScriptLaunch();
+*/
     if(f == 0){printf("ALL OK\n");}
     else{printf("Algunos test fallaron\n");}
 }
