@@ -8,7 +8,7 @@ int getFreeRemaps(remap remaps[]){
     // Retorna el indice de la primera posición vacia en remaps
     // Si no se encuentra ninguna posición vacía se retorna -1
     for(int i = 0; i < NUMBER_OF_REMAPS; i++)
-        if(remaps[i].remapIsEmpty)
+        if(!remaps[i].remapUsed)
             return i;
     return -1;
 }
@@ -68,7 +68,7 @@ void mkKeyRemap(int from, int to,remap remaps[]){
     // Popula la primera posicion vacia del array remaps con from y to
     int pVacia = getFreeRemaps(remaps);
     if(pVacia >= 0){
-        remaps[pVacia].remapIsEmpty = FALSE;
+        remaps[pVacia].remapUsed = TRUE;
         remaps[pVacia].type = TYPE_KEYREMAP;
         remaps[pVacia].hotKey = from;
         remaps[pVacia].keyRemap=to;
@@ -87,7 +87,7 @@ void mkScriptLaunch(int from[8],char *script, int onAction,remap remaps[]){
     if(pVacia >= 0){
         // se popula el vector from de la estructura
         // en la posicion vacia del array remaps
-        remaps[pVacia].remapIsEmpty = FALSE;
+        remaps[pVacia].remapUsed = TRUE;
         remaps[pVacia].type = TYPE_SCRIPT;
         remaps[pVacia].onKeyState = onAction;
         arCpy(remaps[pVacia].from,from);

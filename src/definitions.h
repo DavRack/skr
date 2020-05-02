@@ -23,7 +23,7 @@
 
 // Define la estructura de un remapeo de una tecla o combinación de teclas
 typedef struct remap{
-    int remapIsEmpty;
+    int remapUsed;
     int type;
 
     int onKeyState;

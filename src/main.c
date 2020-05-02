@@ -11,7 +11,7 @@ int main(){
     rap2.code = 0;
     rap2.value = 0;
 
-    blankRemap.remapIsEmpty = TRUE;
+    blankRemap.remapUsed = FALSE;
     blankRemap.type = -1;
 
     //se usa el comando intercept para obtener los eventos

@@ -9,8 +9,8 @@ void makeRemaps(){
 void makeScripts(){
     int f[8];
 
-    f[0] = 107; 
-    f[1] = BLANK;
+    f[0] = 29; 
+    f[1] = 107;
     f[2] = BLANK;
     f[3] = BLANK;
     f[4] = BLANK;
