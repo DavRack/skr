@@ -23,17 +23,12 @@ int getLastLayer(){
     if(index == 0){return 0;}
     else{return index-1;}
 }
-int mkNewLayer(int fnKey){
+void mkNewLayer(int fnKey){
     int index = getFreeLayer();
-    if (index >= 0){
+    if (index >= 0)
         layers[index].fnKey = fnKey;
-        return TRUE;
-    }
-    else return FALSE;
 }
 int getRemapsIndex(remap remaps[],int teclas[],struct input_event ev){
-    // Retorna el indice en remaps[] del evento que contenga el patron teclas.
-    // si no se encuentra retorna -1
     int teclasOrdenadas[8];
     arCpy(teclasOrdenadas,teclas);
     removeSpaces(teclasOrdenadas); 
@@ -99,13 +94,16 @@ void mkScriptLaunch(int from[8],char *script, int onAction,remap remaps[]){
 void scriptLaunch(int from[8],char *script,int onKeyState){
     mkScriptLaunch(from,script,onKeyState,userRemaps);
 }
-int sendScript(char *script){ // no testeada!!
-    // Recibe el indice de un evento en scripts
-    // y envia el script especificado en scripts[].to
+void sendScript(char *script){ // no testeada!!
     popen(script,"w");
-    return TRUE;
 }
-remap getAction(int teclas[],struct input_event keyEvent){
+void executeRemap(remap action,struct input_event ev){
+    if(action.type == TYPE_KEYREMAP)
+        sendKeyEvent(action.keyRemap,ev.value);
+    else if(action.type == TYPE_SCRIPT && action.onKeyState == ev.value)
+        sendScript(action.script);
+}
+void doAction(int teclas[],struct input_event keyEvent){
 
     capaActivada = getLayerIndex(teclas);
     if(capaActivada != BLANK){
@@ -115,40 +113,18 @@ remap getAction(int teclas[],struct input_event keyEvent){
 
             remapEnviado = -1;
 
-            if(teclasSinFnKey[0] != -1){
+            if(teclasSinFnKey[0] != -1)
                 remapEnviado = getRemapsIndex(layers[capaActivada].fnRemaps,teclasSinFnKey,keyEvent);
-            }
             free(teclasSinFnKey);
-            if(remapEnviado > -1){return layers[capaActivada].fnRemaps[remapEnviado];}
-            else{return blankRemap;}
-        }
-        else if(keyEvent.code == layers[capaActivada].fnKey){
-            auxRemap.type = BLANK;
-            return auxRemap;
+            if(remapEnviado > -1)
+                executeRemap(layers[capaActivada].fnRemaps[remapEnviado],keyEvent);
         }
     }
-
-    remapEnviado = getRemapsIndex(userRemaps,teclas,keyEvent);
-    if(remapEnviado != BLANK)
-        return userRemaps[remapEnviado];
-
     else{
-        auxRemap.type = 0;
-        auxRemap.keyRemap = keyEvent.code;
-        auxRemap.onKeyState = keyEvent.value;
-        return auxRemap;
-    }
-}
-void doAction(remap action,struct input_event ev){
-    if(action.type == TYPE_NORMAL){
-        sendKeyEvent(ev.code,ev.value);
-    }
-    else if(action.type == TYPE_KEYREMAP){
-        sendKeyEvent(action.keyRemap,ev.value);
-    }
-    else if(action.type == TYPE_SCRIPT){
-        if(action.onKeyState == ev.value){
-            sendScript(action.script);
-        }
+        remapEnviado = getRemapsIndex(userRemaps,teclas,keyEvent);
+        if(remapEnviado != BLANK)
+            executeRemap(userRemaps[remapEnviado],keyEvent);
+        else
+            sendKeyEvent(keyEvent.code,keyEvent.value);
     }
 }

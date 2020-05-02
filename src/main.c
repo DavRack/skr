@@ -1,5 +1,6 @@
 #include "config.h"
 int main(){
+/*
 
     // Se asignan lo valores para el primer evento especial rap1
     rap1.type = 4;
@@ -10,10 +11,7 @@ int main(){
     rap2.type = 0;
     rap2.code = 0;
     rap2.value = 0;
-
-    blankRemap.remapUsed = FALSE;
-    blankRemap.type = -1;
-
+*/
     //se usa el comando intercept para obtener los eventos
     //generados por el teclado especificado
     input = popen("sudo intercept -g /dev/input/event3","r");
@@ -30,17 +28,14 @@ int main(){
 
             if(rawEvent.value == TECLA_PRESIONADA){
                 append(teclas,rawEvent.code);
-                toDo = getAction(teclas,rawEvent);
-                doAction(toDo,rawEvent);
+                doAction(teclas,rawEvent);
             }
             else if(rawEvent.value == TECLA_SOLTADA){
-                toDo = getAction(teclas,rawEvent);
-                doAction(toDo,rawEvent);
+                doAction(teclas,rawEvent);
                 pop(teclas,rawEvent.code);
             }
             else if(rawEvent.value == TECLA_MANTENIDA){
-                toDo = getAction(teclas,rawEvent);
-                doAction(toDo,rawEvent);
+                doAction(teclas,rawEvent);
             }
             
         }

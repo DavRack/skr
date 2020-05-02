@@ -25,7 +25,6 @@
 typedef struct remap{
     int remapUsed;
     int type;
-
     int onKeyState;
     int hotKey;
     int keyRemap;
@@ -37,9 +36,6 @@ typedef struct remap{
 remap userRemaps[NUMBER_OF_REMAPS];
 
 remap auxRemap;
-remap blankRemap;
-
-remap toDo;
 
 typedef struct fnLayer {
     int fnKey;
@@ -49,8 +45,8 @@ typedef struct fnLayer {
 // Lista con todas las capas de funcion definidas por el usuario
 fnLayer  layers[NUMBER_OF_LAYERS];
 
-struct input_event rap1; // Inicio de evento
-struct input_event rap2; // Finalización de evento
+struct input_event rap1 = {{0},4,4,4}; // Inicio de evento
+struct input_event rap2 = {{0},0,0,0};; // Finalización de evento
 struct input_event event; // Plantilla para enviar un evento KEY
 struct input_event rawEvent; // Evento leido de la entrada cruda del teclado
 
