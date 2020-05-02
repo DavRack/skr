@@ -22,9 +22,8 @@ int main(){
                 doAction(teclas,rawEvent);
                 pop(teclas,rawEvent.code);
             }
-            else if(rawEvent.value == TECLA_MANTENIDA){
+            else if(rawEvent.value == TECLA_MANTENIDA)
                 doAction(teclas,rawEvent);
-            }
         }
     }
 }
