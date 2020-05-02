@@ -1,19 +1,7 @@
 #include "config.h"
 int main(){
-/*
-
-    // Se asignan lo valores para el primer evento especial rap1
-    rap1.type = 4;
-    rap1.code = 4;
-    rap1.value = 31;
-
-    // Se asignan lo valores para el primer evento especial rap2
-    rap2.type = 0;
-    rap2.code = 0;
-    rap2.value = 0;
-*/
     //se usa el comando intercept para obtener los eventos
-    //generados por el teclado especificado
+    //generados por el teclado
     input = popen("sudo intercept -g /dev/input/event3","r");
 
     // se asigna el teclado en la ruta especificada al teclado
@@ -37,7 +25,6 @@ int main(){
             else if(rawEvent.value == TECLA_MANTENIDA){
                 doAction(teclas,rawEvent);
             }
-            
         }
     }
 }
