@@ -5,17 +5,6 @@ int getFreeRemaps(remap remaps[]){
             return i;
     return -1;
 }
-int getFreeLayer(){
-    for(int i=0;i<NUMBER_OF_LAYERS;i++)
-        if(layers[i].fnKey == 0)
-            return i;
-    return -1;
-}
-int getLastLayer(){
-    int index = getFreeLayer();
-    if(index == 0){return 0;}
-    else{return index-1;}
-}
 remap getRemapMatch(remap remaps[],int teclas[],struct input_event ev){
     int teclasOrdenadas[8];
     arCpy(teclasOrdenadas,teclas);
@@ -27,6 +16,17 @@ remap getRemapMatch(remap remaps[],int teclas[],struct input_event ev){
         if((eql(remaps[i].from,teclas) && !teclasEmpty) || (remaps[i].hotKey == ev.code))
             return remaps[i];
     return blankRemap;
+}
+int getFreeLayer(){
+    for(int i=0;i<NUMBER_OF_LAYERS;i++)
+        if(layers[i].fnKey == 0)
+            return i;
+    return -1;
+}
+int getLastLayer(){
+    int index = getFreeLayer();
+    if(index == 0){return 0;}
+    else{return index-1;}
 }
 fnLayer getLayerMatch(int teclas[8]){
     for(int i = 0; i < NUMBER_OF_LAYERS; i++)
@@ -70,18 +70,15 @@ void mkScriptLaunch(int from[8],char *script, int onAction,remap remaps[]){
 void scriptLaunch(int from[8],char *script,int onKeyState){
     mkScriptLaunch(from,script,onKeyState,userRemaps);
 }
-void sendEvent(struct input_event evento, FILE * teclado){ // no testeada!
-    // Recibe un evento y lo envia por medio del teclado solicitado
-    fwrite(&rap1,1,EV_SIZE,teclado);// Se envía el primer envoltorio
-    fwrite(&evento,1,EV_SIZE,teclado);// se envia el evento perse
-    fwrite(&rap2,1,EV_SIZE,teclado);// Se envía el primer envoltorio
-    fflush(teclado);
-}
 void sendKeyEvent(int KEY,int tipo){ // no testeada!!
     event.type=EV_KEY;
     event.code = KEY;
     event.value = tipo;
-    sendEvent(event,teclado);
+
+    fwrite(&rap1,1,EV_SIZE,teclado);// Se envía el primer envoltorio
+    fwrite(&event,1,EV_SIZE,teclado);// se envia el evento perse
+    fwrite(&rap2,1,EV_SIZE,teclado);// Se envía el primer envoltorio
+    fflush(teclado);
 }
 void sendScript(char *script){ // no testeada!!
     popen(script,"w");
@@ -99,18 +96,16 @@ void doAction(int teclas[],struct input_event keyEvent){
         if(layerActivada.fnKey == teclas[0]){
             int *teclasSinFnKey=popFirst(teclas);
 
-            remapEnviado = blankRemap;
-
-            if(teclasSinFnKey[0] != -1)
+            if(teclasSinFnKey[0] != -1){
                 remapEnviado = getRemapMatch(layerActivada.fnRemaps,teclasSinFnKey,keyEvent);
-            free(teclasSinFnKey);
-            if(remapEnviado.remapUsed == FALSE)
                 executeRemap(remapEnviado,keyEvent);
+            }
+            free(teclasSinFnKey);
         }
     }
     else{
         remapEnviado = getRemapMatch(userRemaps,teclas,keyEvent);
-        if(remapEnviado.remapUsed == FALSE)
+        if(remapEnviado.remapUsed == TRUE)
             executeRemap(remapEnviado,keyEvent);
         else
             sendKeyEvent(keyEvent.code,keyEvent.value);
