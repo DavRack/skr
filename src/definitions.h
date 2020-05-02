@@ -37,6 +37,11 @@ remap userRemaps[NUMBER_OF_REMAPS];
 
 remap auxRemap;
 
+remap blankRemap;
+
+// Indice del keyRemap recien eviado 
+remap remapEnviado;
+
 typedef struct fnLayer {
     int fnKey;
     remap fnRemaps[NUMBER_OF_REMAPS];
@@ -44,6 +49,10 @@ typedef struct fnLayer {
 
 // Lista con todas las capas de funcion definidas por el usuario
 fnLayer  layers[NUMBER_OF_LAYERS];
+
+fnLayer layerActivada;
+
+fnLayer blankLayer;
 
 struct input_event rap1 = {{0},4,4,4}; // Inicio de evento
 struct input_event rap2 = {{0},0,0,0};; // Finalización de evento
@@ -56,14 +65,9 @@ FILE *input;
 // Al archivo teclado se escriben los eventos
 FILE *teclado;
 
-// Indice del keyRemap recien eviado 
-int remapEnviado;
-
 // Indice del script recien eviado 
 int scriptEnviado;
 
-// Indice de la capa enviada 
-int capaActivada;
 
 // teclas guarda la o las teclas presionadas en el momento
 int teclas[8]={BLANK,BLANK,BLANK,BLANK,BLANK,BLANK,BLANK,BLANK};
