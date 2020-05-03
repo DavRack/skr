@@ -103,10 +103,11 @@ int arrEq(int arr1[], int arr2[]){
     }
     return True;
 }
-void fillRemapsUpTo(int index){
+void fillRemapsUpTo(remap remaps[],int index){
     int from[8] = {11,22,33,44,55,66,77,88};
     for(int i = 0; i <index;i ++){
-       arCpy(userRemaps[i].from,from);
+       arCpy(remaps[i].from,from);
+       remaps[i].remapUsed = TRUE;
     }
 }
 void clearLayer(){
@@ -118,6 +119,10 @@ void fillLayerUpTo(int index){
     for(int i = 0; i < index;i ++){
        layers[i].fnKey = 58;
     }
+}
+void initRemaps(remap remaps[]){
+    for(int i = 0; i < NUMBER_OF_REMAPS; i++)
+        remaps[i].remapUsed = FALSE;
 }
 /*
 void fillScriptsUpTo(int index){

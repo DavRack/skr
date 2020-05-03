@@ -257,31 +257,35 @@ int TS_find(){
     return analisis(tp,"find");
 }
 
-int T_getFreeRemap(int index){
-    return (getFreeRemaps() == index);
+int T_getFreeRemaps(int index,remap remaps[]){
+    return (getFreeRemaps(remaps) == index);
 }
-int TS_getFreeRemap(){
+int TS_getFreeRemaps(){
     int tp[256];
     init(tp);
 
-    initRemaps();
-    apnd(T_getFreeRemap(0),tp);
+    initRemaps(userRemaps);
+    apnd(T_getFreeRemaps(0,userRemaps),tp);
 
-    initRemaps();
-    fillRemapsUpTo(1);
-    apnd(T_getFreeRemap(1),tp);
+    initRemaps(userRemaps);
+    fillRemapsUpTo(userRemaps,1);
+    apnd(T_getFreeRemaps(1,userRemaps),tp);
 
-    initRemaps();
-    fillRemapsUpTo(255);
-    apnd(T_getFreeRemap(255),tp);
+    initRemaps(userRemaps);
+    fillRemapsUpTo(userRemaps,10);
+    apnd(T_getFreeRemaps(10,userRemaps),tp);
 
-    initRemaps();
-    fillRemapsUpTo(511);
-    apnd(T_getFreeRemap(511),tp);
+    initRemaps(userRemaps);
+    fillRemapsUpTo(userRemaps,255);
+    apnd(T_getFreeRemaps(255,userRemaps),tp);
 
-    initRemaps();
-    fillRemapsUpTo(512);
-    apnd(T_getFreeRemap(-1),tp);
+    initRemaps(userRemaps);
+    fillRemapsUpTo(userRemaps,511);
+    apnd(T_getFreeRemaps(511,userRemaps),tp);
+
+    initRemaps(userRemaps);
+    fillRemapsUpTo(userRemaps,512);
+    apnd(T_getFreeRemaps(-1,userRemaps),tp);
 
     return analisis(tp,"getFreeRemap");
 }
@@ -308,6 +312,44 @@ int TS_getFreeLayer(){
     apnd(T_getFreeLayer(-1),tp);
 
     return analisis(tp,"getFreeLayer");
+}
+/*
+int T_getRemapsMatch(int index){
+    remaps[index].from = 99;
+    remaps[index].to = 55;
+
+    int r = getRemapsIndex(99);
+
+    if(index != r)
+        return False;
+    else
+        return True;
+}
+int TS_getRemapsMatch(){
+    int tp[256];
+    init(tp);
+
+    // array vacio
+    fillRemapsUpTo(-1);
+    apnd(T_getRemapsIndex(-1),tp);
+
+    clearRemaps();
+    fillRemapsUpTo(0);
+    apnd(T_getRemapsIndex(0),tp);
+
+    clearRemaps();
+    fillRemapsUpTo(1);
+    apnd(T_getRemapsIndex(1),tp);
+
+    clearRemaps();
+    fillRemapsUpTo(255);
+    apnd(T_getRemapsIndex(255),tp);
+
+    clearRemaps();
+    fillRemapsUpTo(256);
+    apnd(T_getRemapsIndex(-1),tp);
+
+    return analisis(tp,"getRemapsIndex");
 }
 int T_setNewLayer(){
     int fnKey = 100;
@@ -345,7 +387,6 @@ int TS_setNewLayer(){
 
     return analisis(tp,"setNewLayer");
 }
-/*
 int T_getFreeScripts(int index){
     return (getFreeScripts() == index);
 }
@@ -514,44 +555,6 @@ int TS_mkLayerKeyRemap(){
     apnd(T_mkLayerKeyRemap(),tp);
 
     return analisis(tp,"mkLayerKeyRemap");
-}
-int T_getRemapsIndex(int index){
-    remaps[index].from = 99;
-    remaps[index].to = 55;
-
-    int r = getRemapsIndex(99);
-
-    if(index != r){
-        return False;
-    }else{
-        return True;
-    }
-}
-int TS_getRemapsIndex(){
-    int tp[256];
-    init(tp);
-
-    // array vacio
-    fillRemapsUpTo(-1);
-    apnd(T_getRemapsIndex(-1),tp);
-
-    clearRemaps();
-    fillRemapsUpTo(0);
-    apnd(T_getRemapsIndex(0),tp);
-
-    clearRemaps();
-    fillRemapsUpTo(1);
-    apnd(T_getRemapsIndex(1),tp);
-
-    clearRemaps();
-    fillRemapsUpTo(255);
-    apnd(T_getRemapsIndex(255),tp);
-
-    clearRemaps();
-    fillRemapsUpTo(256);
-    apnd(T_getRemapsIndex(-1),tp);
-
-    return analisis(tp,"getRemapsIndex");
 }
 int T_getScriptsIndex(int input, int index){
 
@@ -775,9 +778,9 @@ f+=TS_pop();
 f+=TS_popFirst();
 f+=TS_find();
 
-f+=TS_getFreeRemap();
+f+=TS_getFreeRemaps();
 f+=TS_getFreeLayer();
-f+=TS_setNewLayer();
+//f+=TS_setNewLayer();
 
 /*
 f+=TS_getAction();
