@@ -1,3 +1,4 @@
+#define _DEFAULT_SOURCE
 #include <linux/input.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,18 +19,28 @@
 #define TYPE_SCRIPT   2
 #define TYPE_MACRO    3
 
-#define NUMBER_OF_REMAPS 512
+#define NUMBER_OF_REMAPS 256
+#define NUMBER_OF_MACROS 128
 #define NUMBER_OF_LAYERS 64
+
+#define MACRO_LENGTH 64
+typedef struct action{
+    unsigned int sleepSeconds;
+    unsigned int sleepMicroSeconds;
+
+    int keyRemap;
+    int onKeyState;
+    char *script;
+}action;
 
 // Define la estructura de un remapeo de una tecla o combinación de teclas
 typedef struct remap{
     int remapUsed;
     int type;
-    int onKeyState;
     int hotKey;
-    int keyRemap;
     int from[8];
-    char *script;
+    action remapAction;
+    action macros[MACRO_LENGTH];
 }remap;
 
 // Lista con todos los remaps definidos por el usuario
@@ -42,7 +53,7 @@ remap blankRemap;
 // Indice del keyRemap recien eviado 
 remap remapEnviado;
 
-typedef struct fnLayer {
+typedef struct fnLayer{
     int fnKey;
     remap fnRemaps[NUMBER_OF_REMAPS];
 }fnLayer;
@@ -59,14 +70,11 @@ struct input_event rap2 = {{0},0,0,0}; // Finalización de evento
 struct input_event event; // Plantilla para enviar un evento KEY
 struct input_event rawEvent; // Evento leido de la entrada cruda del teclado
 
-// De input se leen los eventos de teclado
-FILE *input;
-
-// Al archivo teclado se escriben los eventos
-FILE *teclado;
-
 // Indice del script recien eviado 
 int scriptEnviado;
 
 // teclas guarda la o las teclas presionadas en el momento
 int teclas[8]={BLANK,BLANK,BLANK,BLANK,BLANK,BLANK,BLANK,BLANK};
+
+FILE *input;
+FILE *teclado;

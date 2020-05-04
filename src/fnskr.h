@@ -46,7 +46,7 @@ void mkKeyRemap(int from, int to,remap remaps[]){
         remaps[pVacia].remapUsed = TRUE;
         remaps[pVacia].type = TYPE_KEYREMAP;
         remaps[pVacia].hotKey = from;
-        remaps[pVacia].keyRemap=to;
+        remaps[pVacia].remapAction.keyRemap=to;
     }
 }
 void keyRemap(int hotKey,int keyRemap){
@@ -60,11 +60,11 @@ void mkScriptLaunch(int from[8],char *script, int onAction,remap remaps[]){
     if(pVacia >= 0){
         remaps[pVacia].remapUsed = TRUE;
         remaps[pVacia].type = TYPE_SCRIPT;
-        remaps[pVacia].onKeyState = onAction;
+        remaps[pVacia].remapAction.onKeyState = onAction;
         arCpy(remaps[pVacia].from,from);
 
-        remaps[pVacia].script = (char *) malloc(sizeof(*script));
-        strcpy(remaps[pVacia].script,script);
+        remaps[pVacia].remapAction.script = (char *) malloc(sizeof(*script));
+        strcpy(remaps[pVacia].remapAction.script,script);
     }
 }
 void scriptLaunch(int from[8],char *script,int onKeyState){
@@ -85,9 +85,10 @@ void sendScript(char *script){ // no testeada!!
 }
 void executeRemap(remap action,struct input_event ev){
     if(action.type == TYPE_KEYREMAP)
-        sendKeyEvent(action.keyRemap,ev.value);
-    else if(action.type == TYPE_SCRIPT && action.onKeyState == ev.value)
-        sendScript(action.script);
+        sendKeyEvent(action.remapAction.keyRemap,ev.value);
+    else if(action.type == TYPE_SCRIPT)
+        if(action.remapAction.onKeyState == ev.value)
+        sendScript(action.remapAction.script);
 }
 void doAction(int teclas[],struct input_event keyEvent){
 
