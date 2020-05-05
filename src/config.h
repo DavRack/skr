@@ -10,8 +10,8 @@ void makeScripts(){
     int f[8];
 
     f[0] = 29; 
-    f[1] = 107;
-    f[2] = BLANK;
+    f[1] = 42;
+    f[2] = 107;
     f[3] = BLANK;
     f[4] = BLANK;
     f[5] = BLANK;
@@ -23,6 +23,7 @@ void makeScripts(){
 }
 
 void makeLayers(){
+    int f[8];
     // seleccionar Caps lock como una capa
     mkNewLayer(58);
     
@@ -45,5 +46,29 @@ void makeLayers(){
     layerKeyRemap(100,100);
     layerKeyRemap(54,54);
 
-    
+    f[0] = 29; 
+    f[1] = 30;
+    f[2] = BLANK;
+    f[3] = BLANK;
+    f[4] = BLANK;
+    f[5] = BLANK;
+    f[6] = BLANK;
+    f[7] = BLANK;
+
+    setNewLayerMacro(f);
+
+    layerMacroKey(18,TECLA_PRESIONADA,0);
+    layerMacroKey(18,TECLA_SOLTADA,0.05);
+
+    layerMacroKey(30,TECLA_PRESIONADA,0.05);
+    layerMacroKey(30,TECLA_SOLTADA,0.05);
+
+    layerMacroKey(57,TECLA_PRESIONADA,0.05);
+    layerMacroKey(57,TECLA_SOLTADA,0.05);
+
+    layerMacroKey(49,TECLA_PRESIONADA,0.05);
+    layerMacroKey(49,TECLA_SOLTADA,0.05);
+
+    layerMacroKey(24,TECLA_PRESIONADA,0.05);
+    layerMacroKey(24,TECLA_SOLTADA,0.05);
 }

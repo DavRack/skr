@@ -1,5 +1,4 @@
 #include "config.h"
-unsigned int usecs;
 int main(){
     //se usa el comando intercept para obtener los eventos
     //generados por el teclado

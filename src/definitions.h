@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h> 
 #define BLANK -1
 
 #define TRUE 1
@@ -25,6 +26,7 @@
 
 #define MACRO_LENGTH 64
 typedef struct action{
+    int actionUsed;
     unsigned int sleepSeconds;
     unsigned int sleepMicroSeconds;
 
@@ -59,7 +61,7 @@ typedef struct fnLayer{
 }fnLayer;
 
 // Lista con todas las capas de funcion definidas por el usuario
-fnLayer  layers[NUMBER_OF_LAYERS];
+fnLayer layers[NUMBER_OF_LAYERS];
 
 fnLayer layerActivada;
 
