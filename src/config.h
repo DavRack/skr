@@ -5,14 +5,7 @@ void makeRemaps(){
     // Definir todos los keymaps dentro de esta funcion
 
     keyRemap(15,1); // Tab a ESC
-}
 
-void makeScripts(){
-    // lanzar alacritty con la tecla fin
-    //scriptLaunch(107,"alacritty&",TECLA_SOLTADA);
-}
-
-void makeLayers(){
     // seleccionar Caps lock (58) como una capa
     mkNewLayer(58);
     
