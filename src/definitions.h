@@ -18,35 +18,32 @@
 #define TYPE_NORMAL   0
 #define TYPE_KEYREMAP 1
 #define TYPE_SCRIPT   2
-#define TYPE_MACRO    3
 
 #define NUMBER_OF_REMAPS 256
 #define NUMBER_OF_MACROS 128
 #define NUMBER_OF_LAYERS 64
 
 #define MACRO_LENGTH 64
+#define MIN_SLEEP_TIME 10000
 typedef struct action{
     int actionUsed;
+
     unsigned int sleepSeconds;
     unsigned int sleepMicroSeconds;
 
-    int keyRemap;
-    int onKeyState;
+    int type;
+
+    int key;
+    int keyState;
     char *script;
 }action;
 
 // Define la estructura de un remapeo de una tecla o combinación de teclas
 typedef struct remap{
     int remapUsed;
-    int type;
     int hotKey;
-    int from[8];
-    action remapAction;
-    action macros[MACRO_LENGTH];
+    action actions[MACRO_LENGTH];
 }remap;
-
-// Lista con todos los remaps definidos por el usuario
-remap userRemaps[NUMBER_OF_REMAPS];
 
 remap auxRemap;
 
@@ -56,6 +53,7 @@ remap blankRemap;
 remap remapEnviado;
 
 typedef struct fnLayer{
+    int used;
     int fnKey;
     remap fnRemaps[NUMBER_OF_REMAPS];
 }fnLayer;
