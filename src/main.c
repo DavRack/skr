@@ -3,13 +3,9 @@ int main(){
     //se usa el comando intercept para obtener los eventos
     //generados por el teclado
     input = popen("sudo intercept -g /dev/input/event3","r");
-
-    // se asigna el teclado en la ruta especificada al teclado
     teclado = popen("sudo uinput -d /dev/input/event3","w");
 
     makeRemaps();
-    makeScripts();
-    makeLayers();
 
     while (fread(&rawEvent, sizeof(event), 1, input) == 1) {
         if(rawEvent.type == EV_KEY){

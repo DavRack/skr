@@ -1,47 +1,51 @@
 #include "fnskr.h"
 
 void makeRemaps(){
+    mkNewLayer(0);
     // Definir todos los keymaps dentro de esta funcion
 
     keyRemap(15,1); // Tab a ESC
-}
 
-void makeScripts(){
-    int f[8];
-
-    f[0] = 29; 
-    f[1] = 107;
-    f[2] = BLANK;
-    f[3] = BLANK;
-    f[4] = BLANK;
-    f[5] = BLANK;
-    f[6] = BLANK;
-    f[7] = BLANK;
-
-    // lanzar alacritty con la tecla fin
-    scriptLaunch(f,"alacritty&",TECLA_SOLTADA);
-}
-
-void makeLayers(){
-    // seleccionar Caps lock como una capa
+    // seleccionar Caps lock (58) como una capa
     mkNewLayer(58);
     
     // Los siguientes remaps solo se hacen efectivos
     // cuando está activada la capa
 
     // H,J,K,L a Izquierda, Abajo, Arriba, Derecha
-    layerKeyRemap(35,105); 
-    layerKeyRemap(36,108); 
-    layerKeyRemap(37,103); 
-    layerKeyRemap(38,106); 
+    keyRemap(35,105); 
+    keyRemap(36,108); 
+    keyRemap(37,103); 
+    keyRemap(38,106); 
 
-    layerKeyRemap(57,15); // space a tab
+    keyRemap(57,15); // space a tab
 
     // Mnatener Shift, Ctrl, alt, altgr, shift derecho 
     // cuando se activa la capa
-    layerKeyRemap(42,42);
-    layerKeyRemap(29,29);
-    layerKeyRemap(56,56);
-    layerKeyRemap(100,100);
-    layerKeyRemap(54,54);
+    keyRemap(42,42);
+    keyRemap(29,29);
+    keyRemap(56,56);
+    keyRemap(100,100);
+    keyRemap(54,54);
+
+    setNewMacro(30);
+
+    macroKey(18,TECLA_PRESIONADA,0);
+    macroKey(18,TECLA_SOLTADA,0.05);
+
+    macroKey(30,TECLA_PRESIONADA,0.05);
+    macroKey(30,TECLA_SOLTADA,0.05);
+
+    macroKey(57,TECLA_PRESIONADA,0.05);
+    macroKey(57,TECLA_SOLTADA,0.05);
+
+    macroKey(18,TECLA_PRESIONADA,0.5);
+    macroKey(18,TECLA_SOLTADA,0.05);
+
+    macroKey(30,TECLA_PRESIONADA,0.05);
+    macroKey(30,TECLA_SOLTADA,0.05);
+
+    macroKey(57,TECLA_PRESIONADA,0.05);
+    macroKey(57,TECLA_SOLTADA,0.05);
+
 }
