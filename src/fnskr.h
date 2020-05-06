@@ -107,9 +107,9 @@ void sendKeyEvent(int KEY,int tipo){ // no testeada!!
     event.code = KEY;
     event.value = tipo;
 
-    fwrite(&rap1,1,EV_SIZE,teclado);// Se envía el primer envoltorio
-    fwrite(&event,1,EV_SIZE,teclado);// se envia el evento per se
-    fwrite(&rap2,1,EV_SIZE,teclado);// Se envía el primer envoltorio
+    fwrite(&rap1,1,EV_SIZE,teclado);// envía el primer envoltorio
+    fwrite(&event,1,EV_SIZE,teclado);// envia el evento per se
+    fwrite(&rap2,1,EV_SIZE,teclado);// envía el primer envoltorio
     fflush(teclado);
 }
 void sendScript(char *script){ // no testeada!!
@@ -135,24 +135,19 @@ void executeActions(action actions[],struct input_event event){
         }
     }
 }
+void releaseLayerKeys(int teclas[],remap layerRemaps[]){
+    for(int i = 7; i >= 1; i--){
+        remapEnviado=getRemapMatch(layerRemaps,teclas[i]);
+        if(remapEnviado.remapUsed && !remapEnviado.actions[1].actionUsed)
+            if(remapEnviado.actions[0].type == TYPE_KEYREMAP)
+                executeAction(remapEnviado.actions[0],TECLA_SOLTADA);
+    }
+}
 void doAction(int teclas[],struct input_event keyEvent){
     layerActivada = getLayerMatch(teclas); 
 
-    if(layerActivada.fnKey != 0){
-        if(layerActivada.fnKey == keyEvent.code){
-            if(keyEvent.value == TECLA_SOLTADA && teclas[1] != 0){
-                for(int i = 7; i >= 1;i--){
-                    if(teclas[i] != BLANK){
-                        remapEnviado = getRemapMatch(layerActivada.fnRemaps,teclas[i]);
-                        if(remapEnviado.remapUsed == TRUE)
-                            if(remapEnviado.actions[0].type == TYPE_KEYREMAP)
-                                if(remapEnviado.actions[1].actionUsed == FALSE)
-                                    executeAction(remapEnviado.actions[0],TECLA_SOLTADA);
-                    }
-                }
-            }
-        }
-    }
+    if(keyEvent.value == TECLA_SOLTADA && keyIsFnKey(keyEvent.code))
+        releaseLayerKeys(teclas,layerActivada.fnRemaps);
 
     remapEnviado = getRemapMatch(layerActivada.fnRemaps,keyEvent.code);
 
