@@ -136,8 +136,25 @@ void executeActions(action actions[],struct input_event event){
     }
 }
 void doAction(int teclas[],struct input_event keyEvent){
-    layerActivada = getLayerMatch(teclas);
-    
+    layerActivada = getLayerMatch(teclas); 
+
+    if(layerActivada.fnKey != 0){
+        if(layerActivada.fnKey == keyEvent.code){
+            if(keyEvent.value == TECLA_SOLTADA && teclas[1] != 0){
+                //soltar todas las teclas
+                for(int i = 7; i >= 1;i--){
+                    if(teclas[i] != BLANK){
+                        remapEnviado = getRemapMatch(layerActivada.fnRemaps,teclas[i]);
+                        if(remapEnviado.remapUsed == TRUE)
+                            if(remapEnviado.actions[0].type == TYPE_KEYREMAP)
+                                if(remapEnviado.actions[1].actionUsed == FALSE)
+                                    executeAction(remapEnviado.actions[0],TECLA_SOLTADA);
+                    }
+                }
+            }
+        }
+    }
+
     remapEnviado = getRemapMatch(layerActivada.fnRemaps,keyEvent.code);
 
     if(remapEnviado.remapUsed == TRUE)
