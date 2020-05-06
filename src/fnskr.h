@@ -141,7 +141,6 @@ void doAction(int teclas[],struct input_event keyEvent){
     if(layerActivada.fnKey != 0){
         if(layerActivada.fnKey == keyEvent.code){
             if(keyEvent.value == TECLA_SOLTADA && teclas[1] != 0){
-                //soltar todas las teclas
                 for(int i = 7; i >= 1;i--){
                     if(teclas[i] != BLANK){
                         remapEnviado = getRemapMatch(layerActivada.fnRemaps,teclas[i]);
