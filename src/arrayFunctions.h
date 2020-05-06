@@ -42,31 +42,11 @@ int in(int array[], int element){
     else
         return TRUE;
 }
-int * popBack(int array[],int element){
-    // Elimina la primera instancia del elemento ,"element", del array
-    // en este contexto "eliminar" es cambiar dicho elemento por -1, BLANK
-    int *resoult = (int*) malloc(sizeof(int) * 8);
-    for(int i = 0; i < 8; i++){
-        if(array[i] != element)
-            resoult[i] = array[i];
-        else
-            resoult[i] = BLANK;
-    }
-    removeSpaces(array);
-    return resoult;
-}
 void pop(int origen[],int element){
     for(int i=0; i < 8; i++)
         if(origen[i] == element)
             origen[i] = BLANK;
     removeSpaces(origen);
-}
-int find(int array[],int pattern[]){
-    // Retorna True si pattern contiene las mismas teclas
-    // en el mismo orden que array
-    removeSpaces(array);
-    removeSpaces(pattern);
-    return eql(array,pattern);
 }
 int arrIsEmpty(int arr[]){
     for(int i = 0; i <8; i++)

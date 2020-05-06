@@ -1,4 +1,9 @@
 #include "arrayFunctions.h"
+int keyIsFnKey(int key){
+    for(int i=0; i < NUMBER_OF_LAYERS; i++)
+        if(layers[i].fnKey == key){return TRUE;}
+    return FALSE;
+}
 int getFreeRemaps(remap remaps[]){
     for(int i = 0; i < NUMBER_OF_REMAPS; i++)
         if(!remaps[i].remapUsed)
@@ -113,12 +118,11 @@ void sendScript(char *script){ // no testeada!!
 void executeAction(action toExecute,int keyState){
     if(toExecute.type == TYPE_KEYREMAP)
         sendKeyEvent(toExecute.key,keyState);
-    else if(toExecute.type == TYPE_SCRIPT){
+    else if(toExecute.type == TYPE_SCRIPT)
         if(toExecute.keyState == keyState)
             sendScript(toExecute.script);
-    }
-}
-void executeActions(action actions[],struct input_event event,int teclas[]){
+} 
+void executeActions(action actions[],struct input_event event){
     for(int i = 0; i < MACRO_LENGTH; i++){
         if(actions[i].actionUsed == TRUE){
 
@@ -129,9 +133,6 @@ void executeActions(action actions[],struct input_event event,int teclas[]){
 
             executeAction(actions[i],event.value);
         }
-
-        else
-            break;
     }
 }
 void doAction(int teclas[],struct input_event keyEvent){
@@ -140,7 +141,7 @@ void doAction(int teclas[],struct input_event keyEvent){
     remapEnviado = getRemapMatch(layerActivada.fnRemaps,keyEvent.code);
 
     if(remapEnviado.remapUsed == TRUE)
-        executeActions(remapEnviado.actions,keyEvent,teclas);
-    else if(layerActivada.fnKey == 0)
+        executeActions(remapEnviado.actions,keyEvent);
+    else if(!keyIsFnKey(keyEvent.code))
         sendKeyEvent(keyEvent.code,keyEvent.value);
 }

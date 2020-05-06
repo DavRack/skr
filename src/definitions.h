@@ -45,8 +45,6 @@ typedef struct remap{
     action actions[MACRO_LENGTH];
 }remap;
 
-remap auxRemap;
-
 remap blankRemap;
 
 // Indice del keyRemap recien eviado 

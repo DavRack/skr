@@ -35,78 +35,78 @@ void makeLayers(){
     keyRemap(100,100);
     keyRemap(54,54);
 
-    //setNewLayerMacro(30);
+    setNewMacro(30);
 
-    //layerMacroKey(18,TECLA_PRESIONADA,0);
-    //layerMacroKey(18,TECLA_SOLTADA,0.05);
+    macroKey(18,TECLA_PRESIONADA,0);
+    macroKey(18,TECLA_SOLTADA,0.05);
 
-    //layerMacroKey(30,TECLA_PRESIONADA,0.05);
-    //layerMacroKey(30,TECLA_SOLTADA,0.05);
+    macroKey(30,TECLA_PRESIONADA,0.05);
+    macroKey(30,TECLA_SOLTADA,0.05);
 
-    //layerMacroKey(57,TECLA_PRESIONADA,0.05);
-    //layerMacroKey(57,TECLA_SOLTADA,0.05);
+    macroKey(57,TECLA_PRESIONADA,0.05);
+    macroKey(57,TECLA_SOLTADA,0.05);
 
-    //layerMacroKey(18,TECLA_PRESIONADA,0.5);
-    //layerMacroKey(18,TECLA_SOLTADA,0.05);
+    macroKey(18,TECLA_PRESIONADA,0.5);
+    macroKey(18,TECLA_SOLTADA,0.05);
 
-    //layerMacroKey(30,TECLA_PRESIONADA,0.05);
-    //layerMacroKey(30,TECLA_SOLTADA,0.05);
+    macroKey(30,TECLA_PRESIONADA,0.05);
+    macroKey(30,TECLA_SOLTADA,0.05);
 
-    //layerMacroKey(57,TECLA_PRESIONADA,0.05);
-    //layerMacroKey(57,TECLA_SOLTADA,0.05);
+    macroKey(57,TECLA_PRESIONADA,0.05);
+    macroKey(57,TECLA_SOLTADA,0.05);
 
-    //layerMacroKey(18,TECLA_PRESIONADA,0);
-    //layerMacroKey(18,TECLA_SOLTADA,0.05);
+    macroKey(18,TECLA_PRESIONADA,0);
+    macroKey(18,TECLA_SOLTADA,0.05);
 
-    //layerMacroKey(30,TECLA_PRESIONADA,0.05);
-    //layerMacroKey(30,TECLA_SOLTADA,0.05);
+    macroKey(30,TECLA_PRESIONADA,0.05);
+    macroKey(30,TECLA_SOLTADA,0.05);
 
-    //layerMacroKey(57,TECLA_PRESIONADA,0.05);
-    //layerMacroKey(57,TECLA_SOLTADA,0.05);
+    macroKey(57,TECLA_PRESIONADA,0.05);
+    macroKey(57,TECLA_SOLTADA,0.05);
 
-    //layerMacroKey(18,TECLA_PRESIONADA,0.5);
-    //layerMacroKey(18,TECLA_SOLTADA,0.05);
+    macroKey(18,TECLA_PRESIONADA,0.5);
+    macroKey(18,TECLA_SOLTADA,0.05);
 
-    //layerMacroKey(30,TECLA_PRESIONADA,0.05);
-    //layerMacroKey(30,TECLA_SOLTADA,0.05);
+    macroKey(30,TECLA_PRESIONADA,0.05);
+    macroKey(30,TECLA_SOLTADA,0.05);
 
-    //layerMacroKey(57,TECLA_PRESIONADA,0.05);
-    //layerMacroKey(57,TECLA_SOLTADA,0.05);
+    macroKey(57,TECLA_PRESIONADA,0.05);
+    macroKey(57,TECLA_SOLTADA,0.05);
 
-    //layerMacroKey(18,TECLA_PRESIONADA,0);
-    //layerMacroKey(18,TECLA_SOLTADA,0.05);
+    macroKey(18,TECLA_PRESIONADA,0);
+    macroKey(18,TECLA_SOLTADA,0.05);
 
-    //layerMacroKey(30,TECLA_PRESIONADA,0.05);
-    //layerMacroKey(30,TECLA_SOLTADA,0.05);
+    macroKey(30,TECLA_PRESIONADA,0.05);
+    macroKey(30,TECLA_SOLTADA,0.05);
 
-    //layerMacroKey(57,TECLA_PRESIONADA,0.05);
-    //layerMacroKey(57,TECLA_SOLTADA,0.05);
+    macroKey(57,TECLA_PRESIONADA,0.05);
+    macroKey(57,TECLA_SOLTADA,0.05);
 
-    //layerMacroKey(18,TECLA_PRESIONADA,0.5);
-    //layerMacroKey(18,TECLA_SOLTADA,0.05);
+    macroKey(18,TECLA_PRESIONADA,0.5);
+    macroKey(18,TECLA_SOLTADA,0.05);
 
-    //layerMacroKey(30,TECLA_PRESIONADA,0.05);
-    //layerMacroKey(30,TECLA_SOLTADA,0.05);
+    macroKey(30,TECLA_PRESIONADA,0.05);
+    macroKey(30,TECLA_SOLTADA,0.05);
 
-    //layerMacroKey(57,TECLA_PRESIONADA,0.05);
-    //layerMacroKey(57,TECLA_SOLTADA,0.05);
+    macroKey(57,TECLA_PRESIONADA,0.05);
+    macroKey(57,TECLA_SOLTADA,0.05);
 
-    //layerMacroKey(18,TECLA_PRESIONADA,0);
-    //layerMacroKey(18,TECLA_SOLTADA,0.05);
+    macroKey(18,TECLA_PRESIONADA,0);
+    macroKey(18,TECLA_SOLTADA,0.05);
 
-    //layerMacroKey(30,TECLA_PRESIONADA,0.05);
-    //layerMacroKey(30,TECLA_SOLTADA,0.05);
+    macroKey(30,TECLA_PRESIONADA,0.05);
+    macroKey(30,TECLA_SOLTADA,0.05);
 
-    //layerMacroKey(57,TECLA_PRESIONADA,0.05);
-    //layerMacroKey(57,TECLA_SOLTADA,0.05);
+    macroKey(57,TECLA_PRESIONADA,0.05);
+    macroKey(57,TECLA_SOLTADA,0.05);
 
-    //layerMacroKey(18,TECLA_PRESIONADA,0.5);
-    //layerMacroKey(18,TECLA_SOLTADA,0.05);
+    macroKey(18,TECLA_PRESIONADA,0.5);
+    macroKey(18,TECLA_SOLTADA,0.05);
 
-    //layerMacroKey(30,TECLA_PRESIONADA,0.05);
-    //layerMacroKey(30,TECLA_SOLTADA,0.05);
+    macroKey(30,TECLA_PRESIONADA,0.05);
+    macroKey(30,TECLA_SOLTADA,0.05);
 
-    //layerMacroKey(57,TECLA_PRESIONADA,0.05);
-    //layerMacroKey(57,TECLA_SOLTADA,0.05);
+    macroKey(57,TECLA_PRESIONADA,0.05);
+    macroKey(57,TECLA_SOLTADA,0.05);
 
 }
