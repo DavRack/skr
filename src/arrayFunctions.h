@@ -54,3 +54,10 @@ int arrIsEmpty(int arr[]){
             return FALSE;
     return TRUE;
 }
+int getMs(){
+    struct timeval tv;
+    struct timezone tz;
+    gettimeofday(&tv, &tz);
+    int time = tv.tv_usec;
+    return time;
+}

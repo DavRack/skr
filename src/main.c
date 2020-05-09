@@ -7,7 +7,8 @@ int main(){
 
     makeRemaps();
 
-    while (fread(&rawEvent, sizeof(event), 1, input) == 1) {
+    while (1){
+        fread(&rawEvent, sizeof(event), 1, input);
         if(rawEvent.type == EV_KEY){
 
             if(rawEvent.value == TECLA_PRESIONADA){

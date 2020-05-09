@@ -39,7 +39,7 @@ void makeRemaps(){
     macroKey(57,TECLA_PRESIONADA,0.05);
     macroKey(57,TECLA_SOLTADA,0.05);
 
-    macroKey(18,TECLA_PRESIONADA,0.5);
+    macroKey(18,TECLA_PRESIONADA,0.05);
     macroKey(18,TECLA_SOLTADA,0.05);
 
     macroKey(30,TECLA_PRESIONADA,0.05);

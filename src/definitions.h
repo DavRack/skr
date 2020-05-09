@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h> 
+#include <time.h>
 #define BLANK -1
 
 #define TRUE 1

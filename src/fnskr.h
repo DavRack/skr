@@ -50,7 +50,7 @@ void setNewMacro(int hotKey){
 }
 void add2Actions(int key,int keyState,int type,float sleep,char *script,remap rp[],int index){
     int sleepSeconds = (int) sleep;
-    int sleepMicroSeconds = (int) ((sleep-(sleepSeconds))*1000000);
+    int sleepMicroSeconds = (int) ((sleep-(sleepSeconds))*100000);
 
     if(sleepMicroSeconds > 0 && sleepMicroSeconds < MIN_SLEEP_TIME)
         sleepMicroSeconds=MIN_SLEEP_TIME;
@@ -126,9 +126,9 @@ void executeActions(action actions[],struct input_event event){
     for(int i = 0; i < MACRO_LENGTH; i++){
         if(actions[i].actionUsed == TRUE){
 
-            if(actions[i].sleepSeconds)
+            if(actions[i].sleepSeconds > 0)
                 sleep(actions[i].sleepSeconds);
-            if(actions[i].sleepMicroSeconds)
+            if(actions[i].sleepMicroSeconds > 0)
                 usleep(actions[i].sleepMicroSeconds);
 
             executeAction(actions[i],event.value);
