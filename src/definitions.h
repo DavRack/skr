@@ -25,7 +25,7 @@
 #define NUMBER_OF_LAYERS 64
 
 #define MACRO_LENGTH 64
-#define MIN_SLEEP_TIME 10000
+#define MIN_SLEEP_TIME 1000 // 1000 Microseconds = 1 Milisecond
 typedef struct action{
     int actionUsed;
 
