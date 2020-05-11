@@ -1,6 +1,6 @@
 #!/bin/sh
 
-gcc -oFast src/main.c -o skr
+gcc  src/main.c -o skr
 
 if [ "$1" = "-x" ]; then
         ./skr

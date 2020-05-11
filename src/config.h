@@ -30,22 +30,15 @@ void makeRemaps(){
 
     setNewMacro(30);
 
-    macroKey(18,TECLA_PRESIONADA,0);
-    macroKey(18,TECLA_SOLTADA,0.05);
+    macroKey(25,TECLA_PRESIONADA,0.2);
+    macroKey(25,TECLA_SOLTADA,0.2);
 
-    macroKey(30,TECLA_PRESIONADA,0.05);
-    macroKey(30,TECLA_SOLTADA,0.05);
+    macroKey(25,TECLA_PRESIONADA,0.2);
+    macroKey(25,TECLA_SOLTADA,0.2);
 
-    macroKey(57,TECLA_PRESIONADA,0.05);
-    macroKey(57,TECLA_SOLTADA,0.05);
+    macroKey(25,TECLA_PRESIONADA,0.2);
+    macroKey(25,TECLA_SOLTADA,0.2);
 
-    macroKey(18,TECLA_PRESIONADA,0.05);
-    macroKey(18,TECLA_SOLTADA,0.05);
-
-    macroKey(30,TECLA_PRESIONADA,0.05);
-    macroKey(30,TECLA_SOLTADA,0.05);
-
-    macroKey(57,TECLA_PRESIONADA,0.05);
-    macroKey(57,TECLA_SOLTADA,0.05);
-
+    macroKey(25,TECLA_PRESIONADA,0.2);
+    macroKey(25,TECLA_SOLTADA,0.2);
 }

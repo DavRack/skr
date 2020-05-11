@@ -34,12 +34,22 @@ fnLayer getLayerMatch(int teclas[8]){
     return layers[0];
 }
 void sendKeyEvent(int KEY,int tipo){
+    struct timeval tv;
+    struct timezone tz;
+    gettimeofday(&tv, &tz);
+
+    event.time.tv_sec = tv.tv_sec;
+    event.time.tv_usec = tv.tv_usec;
     event.type=EV_KEY;
     event.code = KEY;
     event.value = tipo;
 
+    rap1.value = KEY;    
+
     fwrite(&rap1,1,EV_SIZE,teclado);// envía el primer envoltorio
+    fflush(teclado);
     fwrite(&event,1,EV_SIZE,teclado);// envia el evento per se
+    fflush(teclado);
     fwrite(&rap2,1,EV_SIZE,teclado);// envía el primer envoltorio
     fflush(teclado);
 }
@@ -57,12 +67,16 @@ void executeActions(action actions[],struct input_event event){
     for(int i = 0; i < MACRO_LENGTH; i++){
         if(actions[i].actionUsed == TRUE){
 
-           if(actions[i].sleepSeconds > 0)
+            if(actions[i].sleepSeconds > 0)
                 sleep(actions[i].sleepSeconds);
             if(actions[i].sleepMicroSeconds > 0)
                 usleep(actions[i].sleepMicroSeconds);
 
-            executeAction(actions[i],event.value);
+            // if action is part of a macro
+            if(actions[1].actionUsed)
+                executeAction(actions[i],actions[i].keyState);
+            else
+                executeAction(actions[i],event.value);
         }
     }
 }
@@ -82,8 +96,12 @@ void doAction(int teclas[],struct input_event keyEvent){
 
     remapEnviado = getRemapMatch(layerActivada.fnRemaps,keyEvent.code);
 
-    if(remapEnviado.remapUsed == TRUE)
-        executeActions(remapEnviado.actions,keyEvent);
+    if(remapEnviado.remapUsed == TRUE){
+        if(remapEnviado.actions[1].actionUsed == FALSE)
+            executeActions(remapEnviado.actions,keyEvent);
+        else if(keyEvent.value != TECLA_SOLTADA)
+            executeActions(remapEnviado.actions,keyEvent);
+    }
     else if(!keyIsFnKey(keyEvent.code) && layerActivada.fnKey == 0)
         sendKeyEvent(keyEvent.code,keyEvent.value);
 }

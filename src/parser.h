@@ -36,14 +36,14 @@ void add2Actions(int key,int keyState,int type,float sleep,char *script,remap *r
         }
     }
 }
-void scriptLaunch(int hotKey,char *script, int onAction){
+void script(int hotKey,char *script, int onAction){
     remap *remaps = layers[getLastLayer()].fnRemaps;
     int pVacia = getFreeRemaps(remaps);
     if(pVacia >= 0){
         remaps[pVacia].remapUsed = TRUE;
         remaps[pVacia].hotKey = hotKey;
 
-        add2Actions(0,0,TYPE_SCRIPT,0,0,&remaps[pVacia]);
+        add2Actions(0,onAction,TYPE_SCRIPT,0,0,&remaps[pVacia]);
     }
 }
 void keyRemap(int hotKey, int keyRemap){
@@ -53,7 +53,7 @@ void keyRemap(int hotKey, int keyRemap){
         remaps[pVacia].remapUsed = TRUE;
         remaps[pVacia].hotKey = hotKey;
 
-        add2Actions(keyRemap,0,TYPE_KEYREMAP,0,0,&remaps[pVacia]);
+        add2Actions(keyRemap,BLANK,TYPE_KEYREMAP,0,0,&remaps[pVacia]);
     }
 }
 void macroKey(int keyCode, int keyState, float sleepTime){

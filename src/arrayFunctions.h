@@ -54,10 +54,16 @@ int arrIsEmpty(int arr[]){
             return FALSE;
     return TRUE;
 }
-int getMs(){
+struct timeval getMs(){
     struct timeval tv;
     struct timezone tz;
     gettimeofday(&tv, &tz);
-    int time = tv.tv_usec;
-    return time;
+    return tv;
+}
+void printExecTime(struct timeval tv){
+    struct timeval tv2;
+    struct timezone tz;
+    gettimeofday(&tv2, &tz);
+
+
 }
