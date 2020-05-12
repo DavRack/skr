@@ -16,7 +16,6 @@
 #define TECLA_PRESIONADA 1
 #define TECLA_SOLTADA 0
 
-#define TYPE_NORMAL   0
 #define TYPE_KEYREMAP 1
 #define TYPE_SCRIPT   2
 
@@ -62,17 +61,10 @@ fnLayer layers[NUMBER_OF_LAYERS];
 
 fnLayer layerActivada;
 
-fnLayer blankLayer;
-
-fnLayer nonFreeLayer;
-
 struct input_event rap1 = {{0},4,4,4}; // Inicio de evento
 struct input_event rap2 = {{0},0,0,0}; // Finalización de evento
-struct input_event event; // Plantilla para enviar un evento KEY
+struct input_event event = {{0},EV_KEY,0,0}; // Plantilla para enviar un evento KEY
 struct input_event rawEvent; // Evento leido de la entrada cruda del teclado
-
-// Indice del script recien eviado 
-int scriptEnviado;
 
 // teclas guarda la o las teclas presionadas en el momento
 int teclas[8]={BLANK,BLANK,BLANK,BLANK,BLANK,BLANK,BLANK,BLANK};
