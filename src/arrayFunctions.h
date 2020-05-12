@@ -7,7 +7,7 @@ int eql(int arr1[],int arr2[]){
 }
 int getIndexInArray(int element,int array[]){
     for(int i = 0; i <8; i++)
-        if(array[i] == element) 
+        if(array[i] == element)
             return i;
     return -1;
 }
