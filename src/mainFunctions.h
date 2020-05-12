@@ -4,12 +4,6 @@ int keyIsFnKey(int key){
         if(layers[i].fnKey == key){return TRUE;}
     return FALSE;
 }
-int getFreeRemaps(remap remaps[]){
-    for(int i = 0; i < NUMBER_OF_REMAPS; i++)
-        if(!remaps[i].remapUsed)
-            return i;
-    return -1;
-}
 remap getRemapMatch(remap remaps[],int keyCode){
     for(int i = 0; i < NUMBER_OF_REMAPS; i++)
         if(remaps[i].hotKey == keyCode)
@@ -38,18 +32,14 @@ void sendKeyEvent(int KEY,int tipo){
     struct timezone tz;
     gettimeofday(&tv, &tz);
 
-    event.time.tv_sec = tv.tv_sec;
-    event.time.tv_usec = tv.tv_usec;
-    event.type=EV_KEY;
+    event.time = tv;
     event.code = KEY;
     event.value = tipo;
 
     rap1.value = KEY;    
 
     fwrite(&rap1,1,EV_SIZE,teclado);// envía el primer envoltorio
-    fflush(teclado);
     fwrite(&event,1,EV_SIZE,teclado);// envia el evento per se
-    fflush(teclado);
     fwrite(&rap2,1,EV_SIZE,teclado);// envía el primer envoltorio
     fflush(teclado);
 }
