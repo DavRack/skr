@@ -1,11 +1,4 @@
 #include "mainFunctions.h"
-void mkNewLayer(int fnKey){
-    int index = getFreeLayer();
-    if (index >= 0){
-        layers[index].used = TRUE;
-        layers[index].fnKey = fnKey;
-    }
-}
 void add2Actions(int key,int keyState,int type,float sleep,char *script,remap *rp){
     int sleepSeconds = (int) sleep;
     int sleepMicroSeconds = (int) ((sleep-sleepSeconds)*100000);
@@ -37,7 +30,14 @@ int getWorkingRemapIndex(int hotKey,remap *remaps){
     }
     return pVacia;
 }
-void script(int hotKey,char *script, int onAction,float sleep){
+void mkNewLayer(int fnKey){
+    int index = getFreeLayer();
+    if (index >= 0){
+        layers[index].used = TRUE;
+        layers[index].fnKey = fnKey;
+    }
+}
+void script(int hotKey, int onAction,float sleep,char *script){
     remap *remaps = layers[getLastLayer()].fnRemaps;
     int pVacia = getWorkingRemapIndex(hotKey,remaps);
     if(pVacia >= 0){

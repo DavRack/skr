@@ -40,13 +40,11 @@ void makeRemaps(){
     keyRemap(30,57,TECLA_PRESIONADA,0.2);
     keyRemap(30,57,TECLA_SOLTADA,0.2);
 
-    script(30,"st&",TECLA_PRESIONADA,0.2);
+    script(30,TECLA_PRESIONADA,0.2,"st&");
 
     keyRemap(30,25,TECLA_PRESIONADA,0.2);
     keyRemap(30,25,TECLA_SOLTADA,0.2);
 
     keyRemap(30,25,TECLA_PRESIONADA,0.2);
     keyRemap(30,25,TECLA_SOLTADA,0.2);
-
-    script(30,"st -e htop&",TECLA_PRESIONADA,0.2);
 }
