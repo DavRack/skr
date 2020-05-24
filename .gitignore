@@ -1,2 +1,3 @@
 /docs/tests/test
+./__pycache__
 skr
