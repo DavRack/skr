@@ -57,10 +57,9 @@ void keyRemap(int hotKey, int keyCode,int keyState, float sleep){
         add2Actions(keyCode,keyState,TYPE_KEYREMAP,sleep,0,&remaps[pVacia]);
     }
 }
-void parseConfigFromFile(char *filename){
-    FILE *fp = fopen(filename,"r");
+void parseConfigFromFile(FILE *fp){
     if(!fp){
-        printf("cant open config file at: %s",filename);
+        printf("cant open config file");
         exit(0);}
     int arg1,arg2,arg3,arg4;
     float arg5;
@@ -69,16 +68,16 @@ void parseConfigFromFile(char *filename){
     size_t len = 0;
     while (getline(&line, &len, fp) != -1) {
         keyWord = strsep(&line," ");
-        if(strcmp(keyWord,"keyboard") == 0){
+        if(strcmp(keyWord,"KeyboardPath") == 0){
             token = strsep(&line,"\n");
             printf("nuevo teclado: %s %s\n",keyWord,token);
         }
-        else if(strcmp(keyWord,"mkNewLayer") == 0){
+        else if(strcmp(keyWord,"NewLayer") == 0){
             token = strsep(&line,"\n");
             sscanf(token,"%d",&arg1);
-            printf("nueva capa: %s %d\n",keyWord,arg1); 
+            mkNewLayer(arg1);
         }
-        else if(strcmp(keyWord,"keyRemap") == 0){
+        else if(strcmp(keyWord,"KeyRemap") == 0){
             token = strsep(&line," ");
             sscanf(token,"%d",&arg1);
 
@@ -90,9 +89,9 @@ void parseConfigFromFile(char *filename){
 
             token = strsep(&line,"\n");
             sscanf(token,"%d",&arg4);
-            printf("nuevo keyReap: %s %d %d %d %d\n",keyWord,arg1,arg2,arg3,arg4);
+            keyRemap(arg1,arg2,arg3,arg4);
         }
-        else if(strcmp(keyWord,"script") == 0){
+        else if(strcmp(keyWord,"Script") == 0){
             token = strsep(&line," ");
             sscanf(token,"%d",&arg1);
 
@@ -103,8 +102,7 @@ void parseConfigFromFile(char *filename){
             sscanf(token,"%f",&arg5);
 
             token = strsep(&line,"\n");
-            printf("nuevo script: %s %d %d %f %s\n",keyWord,arg1,arg2,arg5,token);
+            script(arg1,arg2,arg5,token);
         }
     }
-    fclose(fp);
 }
