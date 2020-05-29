@@ -247,4 +247,20 @@ keyCodes = {"KEY_RESERVED": 0,
             "KEY_WIMAX": 246,
             "KEY_RFKILL": 247,
             "KEY_MICMUTE": 248,
-            "KEY_MIN_INTERESTING": 113} 
+            "KEY_MIN_INTERESTING": 113,
+
+            # The folowing are custom keycodes bind to common keys
+            # to make the config easier to read
+
+            # This keycodes already exist with other name
+            # (often longer or less descriptive)
+
+            # modifiers keys defautls to left
+            # CTRL == LEFTCTRL
+
+            "KEY_SHIFT": 42,
+            "KEY_CTRL": 29,
+            "KEY_ALT": 56,
+            "KEY_META": 125,
+            "KEY_SUPER": 125,
+            } 
