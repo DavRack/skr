@@ -38,15 +38,20 @@ class scriptAction(action):
             
 class textAction(action):
     def output(self):
+
         keyAction = action(self.hotkey,[],"0")
-        text = iter(self.action)
-
-        char = next(text,None)
-
-        while char is not None:
+        for char in self.action:
             keyAction.action = getKeyCode(char)
             keyAction.outputFullKey()
-            char = next(text,None)
+
+        # text = iter(self.action)
+
+        # char = next(text,None)
+
+        # while char is not None:
+        #     keyAction.action = getKeyCode(char)
+        #     keyAction.outputFullKey()
+        #     char = next(text,None)
 
 class keyboardPathAction:
     def __init__(self,path):
@@ -62,44 +67,46 @@ class newLayerAction:
 
 class parser:
     tokens = []
+    parserTokens = ["->","=>","="]
 
     def parse(self,line):
         lineTokens = []
         toParse = line.strip() # remove sorrounding spaces
         if len(toParse) > 0 and toParse[0] != "#":
-            lineTokens = toParse.split(" ",1)
-            if lineTokens[0] != "=>":
-                lineTokens = toParse.split(" ",2)
-            else: 
-                lineTokens.insert(0,"")
+            for parserToken in self.parserTokens:
+                lineTokens = toParse.split(parserToken,1)
+                if len(lineTokens) == 2:
+                    lineTokens.insert(1,parserToken)
+                    lineTokens = list(map(str.strip,lineTokens))
+                    break
             self.tokens.append(lineTokens)
 
     def tokenToAction(self):
         hotkey = 0
         print("NewLayer",0)
         for line in self.tokens:
-            if len(line) == 1: # not a remap or macro
-                token = line[0]
-                arguments = getArguments(token)[0][0]
+            command = line[2]
+            trigger = line[0]
 
-                if "KeyboardPath" in token:
-                    action = keyboardPathAction(arguments)
-                elif "NewLayer" in token:
-                    action = newLayerAction(arguments)
+            if trigger != "":
+                hotkey = trigger
 
+            action = getAction(hotkey,command)
+
+            if line[0].upper() == "KEYBOARDPATH":
+                action = keyboardPathAction(line[2])
+
+            elif line[0].upper() == "NEWLAYER":
+                action = newLayerAction(line[2])
+
+            if line[1] == "->":
                 action.output()
 
-            # key remap
-            else:
-                if line[0] != "":
-                    hotkey = line[0]
+            elif line[1] == "=":
+                action.output()
 
-                action = getAction(hotkey,line[2])
-
-                if line[1] == "->":
-                    action.output()
-                elif line[1] == "=>":
-                    action.macroOutput()
+            elif line[1] == "=>":
+                action.macroOutput()
 
 def isKey(token):
     code = getKeyCode(token)
@@ -157,6 +164,9 @@ def getAction(hotkey,token):
             return scriptAction(hotkey,arguments,actions[1])
 
 def getWait(argList):
+    if type(argList) == str:
+        return float(argList)
+
     for arg in argList:
         if arg[0].strip() == "wait":
             return float(arg[1])
