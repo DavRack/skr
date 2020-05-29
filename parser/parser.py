@@ -26,6 +26,9 @@ class keyAction(action):
         print("KeyRemap",self.hotkey,self.action,BLANK,0)
     def macroOutput(self):
         self.outputFullKey()
+    def swapAction(self):
+        print("KeyRemap",self.hotkey,self.action,BLANK,0)
+        print("KeyRemap",self.action,self.hotkey,BLANK,0)
 
 class scriptAction(action):
     def output(self):
@@ -67,7 +70,7 @@ class newLayerAction:
 
 class parser:
     tokens = []
-    parserTokens = ["->","=>","="]
+    parserTokens = ["<->","->","=>","="]
 
     def parse(self,line):
         lineTokens = []
@@ -107,6 +110,8 @@ class parser:
 
             elif line[1] == "=>":
                 action.macroOutput()
+            elif line[1] == "<->":
+                action.swapAction()
 
 def isKey(token):
     code = getKeyCode(token)
