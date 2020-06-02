@@ -5,17 +5,10 @@ configPath = os.path.expanduser("~/.config/skr/skr.config")
 
 if os.path.exists(configPath):
 
-    file1 = open(configPath, 'r')
-    lines = file1.readlines()
-
-    tokenLines = []
-
-    for line in lines:
-        tokens = parserClasses.lineToTokens(line)
-        if tokens:
-            tokenLines.append(tokens)
-
-    finalLines = parserClasses.tokenToAction(tokenLines)
+    configFile = open(configPath, 'r')
+    lines = configFile.readlines()
+    
+    finalLines = parserClasses.parse(lines)
 
     for line in finalLines:
         print(line)
