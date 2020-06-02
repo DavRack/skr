@@ -8,14 +8,16 @@ if os.path.exists(configPath):
     file1 = open(configPath, 'r')
     lines = file1.readlines()
 
-    parser = parserClasses.parser()
+    tokenLines = []
 
     for line in lines:
-        parser.parse(line)
+        tokens = parserClasses.lineToTokens(line)
+        if tokens:
+            tokenLines.append(tokens)
 
-    parser.tokenToAction()
+    finalLines = parserClasses.tokenToAction(tokenLines)
 
-    for line in parser.finalLines:
+    for line in finalLines:
         print(line)
 else:
     print("error file dont exist")
