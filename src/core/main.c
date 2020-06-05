@@ -3,7 +3,7 @@
 int main(){
     //se usa el comando intercept para obtener los eventos
     //generados por el teclado
-    FILE *configFile = popen("python3 parser/parser.py","r");
+    FILE *configFile = popen("python3 src/parser/parser.py","r");
     parseConfigFromFile(configFile);
 
     input = popen("sudo intercept -g /dev/input/event3","r");
