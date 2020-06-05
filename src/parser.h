@@ -70,7 +70,6 @@ void parseConfigFromFile(FILE *fp){
         keyWord = strsep(&line," ");
         if(strcmp(keyWord,"KeyboardPath") == 0){
             token = strsep(&line,"\n");
-            printf("nuevo teclado: %s %s\n",keyWord,token);
         }
         else if(strcmp(keyWord,"NewLayer") == 0){
             token = strsep(&line,"\n");
@@ -103,6 +102,11 @@ void parseConfigFromFile(FILE *fp){
 
             token = strsep(&line,"\n");
             script(arg1,arg2,arg5,token);
+        }
+        else if(strcmp(keyWord,"FAIL") == 0){
+            token = strsep(&line,"\n");
+            printf("FAIL %s\n",token);
+            exit(1);
         }
     }
 }
