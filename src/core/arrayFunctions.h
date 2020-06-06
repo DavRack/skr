@@ -64,6 +64,14 @@ void printExecTime(struct timeval tv){
     struct timeval tv2;
     struct timezone tz;
     gettimeofday(&tv2, &tz);
+}
+char * cat(char *str1, char* str2){
+    int s = strlen(str1)+strlen(str2)+5;
 
+    char *out = (char*) malloc(50);
 
+    snprintf(out,s,"%s%s",str1,str2);
+    printf("out: %s",out);
+
+    return out;
 }

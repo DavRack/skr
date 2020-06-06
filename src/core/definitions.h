@@ -69,5 +69,6 @@ struct input_event rawEvent; // Evento leido de la entrada cruda del teclado
 // teclas guarda la o las teclas presionadas en el momento
 int teclas[8]={BLANK,BLANK,BLANK,BLANK,BLANK,BLANK,BLANK,BLANK};
 
+char *userKeyboard;
 FILE *input;
 FILE *teclado;

@@ -6,8 +6,12 @@ int main(){
     FILE *configFile = popen("python3 src/parser/parser.py","r");
     parseConfigFromFile(configFile);
 
-    input = popen("sudo intercept -g /dev/input/event3","r");
-    teclado = popen("sudo uinput -d /dev/input/event3","w");
+    // generate shell commands to interact with interception-tools
+    char *uinput = cat("sudo uinput -d ",userKeyboard);
+    char *intercept = cat("sudo intercept -g ",userKeyboard);
+
+    input = popen(intercept,"r");
+    teclado = popen(uinput,"w");
 
     while (1){
         fread(&rawEvent, sizeof(event), 1, input);

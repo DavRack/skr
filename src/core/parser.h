@@ -57,6 +57,9 @@ void keyRemap(int hotKey, int keyCode,int keyState, float sleep){
         add2Actions(keyCode,keyState,TYPE_KEYREMAP,sleep,0,&remaps[pVacia]);
     }
 }
+void KeyboardPath(char *keyboard){
+    userKeyboard = keyboard;
+}
 void parseConfigFromFile(FILE *fp){
     if(!fp){
         printf("cant open config file");
@@ -70,6 +73,7 @@ void parseConfigFromFile(FILE *fp){
         keyWord = strsep(&line," ");
         if(strcmp(keyWord,"KeyboardPath") == 0){
             token = strsep(&line,"\n");
+            KeyboardPath(token);
         }
         else if(strcmp(keyWord,"NewLayer") == 0){
             token = strsep(&line,"\n");
