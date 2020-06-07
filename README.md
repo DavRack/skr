@@ -13,15 +13,48 @@ SKR is a low level, low latency way to remap keys to:
 
 ### Instalation
 
+First install interception-tools and git
+
+**On Arch Linux:**
+
+install the interception-tools from the aur
+
+> example using [yay](https://github.com/Jguer/yay) AUR helper
+
+```vim
+yay -S interception-tools git
+
+```
+
+**On ubuntu:**
+
+```bash
+sudo apt install git libudev-dev libevdev-dev libyaml-cpp-dev build-essential
+git clone https://gitlab.com/interception/linux/tools.git
+cd tools
+mkdir build
+cd build
+cmake ..
+make
+sudo make install
+```
+
+**Then install skr:**
+
 ```shell
-mkdir skr  
-cd skr
 git clone https://github.com/DavRack/skr.git
+cd skr
+./install.sh
+```
+
+To uninstall skr:
+```
+./install.sh -u
 ```
 
 ### Examples
 
-> Create the config file at: ~/.config/skr/skr.config
+> Create a config file at: ~/.config/skr/skr.config
 
 Remap CapsLock to Esc
 
@@ -71,4 +104,6 @@ Nota: Este software fue probado en ArchLinux con kernel 5.6.6-arch1-1
 + md install
 + md custom macros
 + dont run non sudo commands as root
-
++ automatic start
++ remove dependencies
++ install on linux
