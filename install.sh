@@ -6,6 +6,9 @@ install(){
     sudo mkdir -p /usr/share/skr 
     sudo cp -r src/parser /usr/share/skr
 
+    gcc src/kid/skrkid.c -o skrkid
+    sudo cp skrkid /usr/share/skr
+
     sudo cp skr /usr/bin/
 }
 uninstall(){

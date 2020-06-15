@@ -61,9 +61,6 @@ void KeyboardPath(char *keyboard){
     userKeyboard = keyboard;
 }
 void parseConfigFromFile(FILE *fp){
-    if(!fp){
-        printf("cant open config file");
-        exit(0);}
     int arg1,arg2,arg3,arg4;
     float arg5;
     char *token,*keyWord;

@@ -9,7 +9,7 @@ SKR is a low level, low latency way to remap keys to:
 + Secuences of keys and/or commands/scripts
 + Function Layers
 
-[Tabla de keyCodes](docs/keyCodes.md)
+[keycode table](docs/keyCodes.md)
 
 ### Instalation
 
@@ -17,19 +17,19 @@ First install interception-tools and git
 
 **On Arch Linux:**
 
-install the interception-tools from the aur
+Install the interception-tools from the aur
 
 > example using [yay](https://github.com/Jguer/yay) AUR helper
 
-```vim
-yay -S interception-tools git
+```shell
+yay -S git interception-tools
 
 ```
 
-**On ubuntu:**
+**On ubuntu 20.04:**
 
-```bash
-sudo apt install git libudev-dev libevdev-dev libyaml-cpp-dev build-essential
+```shell
+sudo apt install git libudev-dev libevdev-dev libyaml-cpp-dev cmake build-essential
 git clone https://gitlab.com/interception/linux/tools.git
 cd tools
 mkdir build
@@ -39,7 +39,7 @@ make
 sudo make install
 ```
 
-**Then install skr:**
+#### Install skr
 
 ```shell
 git clone https://github.com/DavRack/skr.git
@@ -48,7 +48,8 @@ cd skr
 ```
 
 To uninstall skr:
-```
+
+```shell
 ./install.sh -u
 ```
 
@@ -58,19 +59,19 @@ To uninstall skr:
 
 Remap CapsLock to Esc
 
-```vim
+```shell
 CapsLock -> Esc
 ```
 
 or with explicit keyCodes
 
-```vim
+```shell
 KeyCode(58) -> KeyCode(58)
 ```
 
 Swap Meta ("Windows" key) with left alt
 
-```vim
+```shell
 META <-> ALT
 ```
 
@@ -79,7 +80,7 @@ CapsLock as fnLayer
 
 > when a fnLayer is defined it's fnKey will **only** work as fnKey
 
-```vim
+```shell
 NewLayer -> CapsLock
     H -> LEFT
     J -> DOWN

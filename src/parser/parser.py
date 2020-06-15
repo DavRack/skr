@@ -10,18 +10,11 @@ if os.path.exists(configPath):
     
     finalLines = parserClasses.parse(lines)
 
-    for line in finalLines:
-        print(line)
-else:
-    print("can't find config file in ~/.config/skr/skr.config")
-    print("create a blanck config file?")
-    
-    userAnswer = input("yes/no ")
-    userAnswer = userAnswer.upper()
+    if len(finalLines) == 1:
+        print("FAIL empty config file")
 
-    if userAnswer == "YES" or userAnswer == "Y":
-        path = os.path.expanduser("~/.config/skr") 
-        os.makedirs(path)
-        path = path+"/skr.config"
-        os.mknod(path)
-        print("config file created")
+    else:
+        for line in finalLines:
+            print(line)
+else:
+    print("FAIL can't find config file, to create one run skr --init")
