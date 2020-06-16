@@ -1,13 +1,20 @@
 import parserClasses
 import os
 
-configPath = os.path.expanduser("~/.config/skr/skr.config")
+user = os.getenv("USER")
+
+if user == "root":
+    user == os.getenv("SUDO_USER")
+    if user == "":
+        user == "root"
+
+configPath = "/home/"+user+"/.config/skr/skr.config"
 
 if os.path.exists(configPath):
 
     configFile = open(configPath, 'r')
     lines = configFile.readlines()
-    
+
     finalLines = parserClasses.parse(lines)
 
     if len(finalLines) == 1:

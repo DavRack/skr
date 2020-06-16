@@ -66,7 +66,6 @@ void initSkr(){
     }
 }
 int main(int argc, char *argv[]){
-
     // if the user has provided some arguments
     if (argc > 1){
         if(strcmp(argv[1],"--init") == 0){
@@ -77,7 +76,6 @@ int main(int argc, char *argv[]){
             exit(0);
         }
     }
-
 
     //se usa el comando intercept para obtener los eventos
     //generados por el teclado
