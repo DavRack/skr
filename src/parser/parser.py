@@ -2,10 +2,9 @@ import parserClasses
 import os
 
 user = os.getenv("USER")
-
 if user == "root":
-    user == os.getenv("SUDO_USER")
-    if user == "":
+    user = os.getenv("SUDO_USER")
+    if type(user) is not str:
         user == "root"
 
 configPath = "/home/"+user+"/.config/skr/skr.config"
