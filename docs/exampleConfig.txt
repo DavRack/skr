@@ -1,0 +1,34 @@
+# The path of my laptop leyboard
+# if available /dev/input/by-id paths are prefered becouse that paths dont change after reboot
+
+KeyboardPath->/dev/input/event3
+
+# remap Tab to Esc
+TAB -> ESC
+
+# swap super and right alt
+META <-> ALT
+
+# Define a new fnLayer using capsLock as fnKey
+NewLayer->CapsLock
+
+    SPACE -> TAB
+
+    # use HJKL as arrow keys (vim style!)
+    H -> LEFT
+    J -> DOWN
+    K -> UP
+    L -> RIGHT
+
+    # launch ST terminal with the T key
+    # using "&" at the end of the command will prevent the app for clossing if skr is stoped
+
+    T -> Script=st&
+
+    # if you want modifiers inside a layer simply remap them to themselves (or any other key)
+    LEFTCTRL -> LEFTCTRL
+    RIGHTCTRL -> RIGHTCTRL
+    LEFTSHIFT -> LEFTSHIFT
+    RIGHTSHIFT -> RIGHTSHIFT
+    LEFTALT -> LEFTALT
+    RIGHTALT -> RIGHTALT

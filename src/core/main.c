@@ -56,7 +56,7 @@ void initSkr(){
         fprintf(configFile,"# The keyboard that skr will intercept\n");
         fprintf(configFile,"KeyboardPath -> %s\n",line);
         fprintf(configFile," \n");
-        fprintf(configFile,"# Get a tutorial, config examples and source code at: \n");
+        fprintf(configFile,"# Get a config examples and source code at: \n");
         fprintf(configFile,"#   https://github.com/davrack/skr\n");
 
         fclose(configFile);
