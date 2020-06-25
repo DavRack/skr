@@ -14,6 +14,10 @@ in general, even works in tty.
 ### Table of Contents
 
 + [Installation](#installation)
+  + [Arch Linux](#arch-linux)
+  + [Ubuntu 20.04](#ubuntu-20.04)
+  + [Fedora 32](#fedora-32)
+  + [Uninstall](#uninstall-skr)
 + [Configuration](#configuration)
   + [Key remap](#key-remap)
   + [Scripts](#scripts)
@@ -23,11 +27,9 @@ in general, even works in tty.
 
 ## Installation
 
-First **install interception-tools** and git
+#### Arch Linux
 
-#### On Arch Linux
-
-Install the interception-tools from the aur
+Install git and interception-tools from the aur
 
 > example using [yay](https://github.com/Jguer/yay) AUR helper
 
@@ -36,7 +38,16 @@ yay -S git interception-tools
 
 ```
 
-#### On Ubuntu 20.04
+Install skr
+```shell
+git clone https://github.com/DavRack/skr.git
+cd skr
+./install.sh
+```
+
+#### Ubuntu 20.04
+
+First **install interception-tools** and git
 
 ```shell
 sudo apt install git libudev-dev libevdev-dev libyaml-cpp-dev cmake build-essential
@@ -47,17 +58,41 @@ cd build
 cmake ..
 make
 sudo make install
+cd
 ```
 
-### Install skr
-docs/exampleConfig.txt
+Install skr
 ```shell
 git clone https://github.com/DavRack/skr.git
 cd skr
 ./install.sh
 ```
 
-To uninstall skr:
+#### Fedora 32
+
+First **install interception-tools** and git
+
+```shell
+sudo dnf install git cmake yaml-cpp-devel libevdev-devel systemd-devel gcc-c++ @development-tools
+git clone https://gitlab.com/interception/linux/tools.git
+cd tools
+mkdir build
+cd build
+cmake ..
+make
+sudo make install
+cd
+```
+
+Install skr
+
+```shell
+git clone https://github.com/DavRack/skr.git
+cd skr
+./install.sh
+```
+
+### Uninstall skr
 
 ```shell
 ./install.sh -u
