@@ -4,7 +4,7 @@ SKR is a low level, low latency way to remap keys to:
 
 + Other keys
 + Shell commands or scripts
-+ Sequences of keys, commands and scripts (A.K.A Macros)
++ Sequences of keys, commands and scripts (A.K.A Macros) (needs to be documented but it's there)
 + Function Layers
 
 SKR sits very low in the keyboard stack just above the kernel so its
