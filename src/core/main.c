@@ -83,8 +83,10 @@ int main(int argc, char *argv[]){
     parseConfigFromFile(configFile);
 
     // generate shell commands to interact with interception-tools
-    char *uinput = cat("sudo uinput -d ",userKeyboard);
-    char *intercept = cat("sudo intercept -g ",userKeyboard);
+    char uinput[256];
+    char intercept[256];
+    snprintf(uinput,sizeof uinput,"sudo uinput -d %s",userKeyboard);
+    snprintf(intercept,sizeof intercept,"sudo intercept -g %s",userKeyboard);
 
     input = popen(intercept,"r");
     teclado = popen(uinput,"w");
