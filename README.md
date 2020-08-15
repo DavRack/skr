@@ -272,9 +272,6 @@ sudo systemctl start skr.service
 
 ### TODO
 
-+ MD install
 + MD custom macros
 + Don't run non sudo commands as root
-+ Automatic start
 + Remove dependencies
-+ Install on Linux
