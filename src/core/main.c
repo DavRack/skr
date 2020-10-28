@@ -77,8 +77,7 @@ int main(int argc, char *argv[]){
         }
     }
 
-    //se usa el comando intercept para obtener los eventos
-    //generados por el teclado
+    // using intercept comand to get keyboard events
     FILE *configFile = popen("python3 /usr/share/skr/parser/parser.py","r");
     parseConfigFromFile(configFile);
 
