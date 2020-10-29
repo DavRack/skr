@@ -31,14 +31,14 @@ def keyboardExist(configFile):
 
 def init():
     print("Generating new config file at ~/.config/skr")
-    print("Type a name for the new config file")
+    print("Type a name for the new config file then press Enter")
     filename = input()
     filename = filename.strip()
     filename = filename.replace(".config","")
     filename = filename.replace(".conf","")
 
     os.system("sudo echo ")
-    print("press a key to identify your keyboard")
+    print("press a key to identify your keyboard then press Enter")
     output = subprocess.run(["sudo","/usr/share/skr/skrkid"],
             stdout=subprocess.PIPE)
     input()
