@@ -85,7 +85,14 @@ def init():
     print("Config file created")
     exit()
 
-skrConfigPath = os.path.expanduser("~/.config/skr")
+user = os.getenv("USER")
+if user == "root":
+    user = os.getenv("SUDO_USER")
+    if type(user) is not str:
+        user == "root"
+
+skrConfigPath = "/home/"+user+"/.config/skr"
+
 configFiles = list(filter(
         lambda File: File.endswith(".config"),
         os.listdir(skrConfigPath)))
@@ -107,7 +114,7 @@ if len(sys.argv) == 1:
 
     killer = GracefulKiller()
     while not killer.kill_now:
-        time.sleep(1)
+        time.sleep(2)
 
     for process in skrInstances:
         process.kill()
