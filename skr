@@ -65,8 +65,8 @@ if len(sys.argv) == 2:
         print("skr help")
 
 if len(sys.argv) == 1:
+    print("Initializing skr")
     # create an instance of skrCore for each config file in ~/.config/skr/
-
     for configFile in configFiles:
         subprocess.run(
-                ["/usr/share/skr/skrcore",skrConfigPath+"/"+configFile])
+                ["/usr/share/skr/skrcore","-c",skrConfigPath+"/"+configFile])

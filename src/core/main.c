@@ -4,12 +4,15 @@
 #include <stdlib.h>
 int main(int argc, char *argv[]){
     // if the user has provided some arguments
-    if (argc == 2){
-        if(strcmp(argv[1],"-c") == 0 && argc == 3){
+    if (argc == 3){
+        if(strcmp(argv[1],"-c") == 0){
             printf("Executing skr with %s as config file",argv[2]);
+        }else{
+            printf("Wrong arguments\n");
+            exit(0);
         }
     }else{
-        printf("Wrong arguments\n");
+        printf("Wrong number of arguments\n");
         exit(0);
     }
 
