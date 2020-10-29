@@ -5,53 +5,60 @@ import subprocess
 
 
 def init():
+    print("Generating new config file at ~/.config/skr")
+    print("Type a name for the new config file")
+    filename = input()
+    filename = filename.strip()
+    filename = filename.replace(".config","")
+    filename = filename.replace(".conf","")
 
-    if len(configFiles) > 0:
-        print("Config file exist")
-        exit()
+    os.system("sudo echo ")
+    print("press a key to identify your keyboard")
+    output = subprocess.run(["sudo","/usr/share/skr/skrkid"],
+            stdout=subprocess.PIPE)
+    input()
+    output = output.stdout.decode('utf-8').split("\n")
+    output = list(filter(lambda x: x != "",output))
+
+    keyboard = ""
+    if len(output) == 1:
+        keyboard = output[0]
+        print("Your keyboard path is:",keyboard)
     else:
-        print("Generating config file at ~/.config/skr/skr.config")
-        print("press a key to identify your keyboard")
+        print("No keyboard found")
+        sys.exit()
 
-        if os.getuid() == 0:
-            print('"skr --init" must not be run as root')
-            exit()
-        if os.system("mkdir -p ~/.config/skr") == -1:
-            print("can't create ~/.config/skr")
-            exit()
-
-        if os.system("touch ~/.config/skr/skr.config") == -1:
-            print("can't create ~/.config/skr/skr.config")
-            exit()
-
-        os.system("sudo echo ")
-        output = subprocess.run(["sudo","/usr/share/skr/skrkid"],
-                stdout=subprocess.PIPE)
-        input()
-        output = output.stdout.decode('utf-8').split("\n")
-        output = list(filter(lambda x: x != "",output))
-
-        keyboard = ""
-        if len(output) == 1:
-            keyboard = output[0]
-            print("Your keyboard path is:",keyboard)
-        else:
-            print("No keyboard found")
-            sys.exit()
-
-        # create config file
-
-        configFile = open(skrConfigPath+"/skr.config","a")
-
-        configFile.write("# Auto gen SKR config file\n")
-        configFile.write("# The keyboard that skr will intercept\n")
-        configFile.write("KeyboardPath -> "+keyboard+"\n")
-        configFile.write("\n")
-        configFile.write("# Get a config examples and source code at:\n")
-        configFile.write("#   https://github.com/davrack/skr\n")
-
-        configFile.close()
+    if os.getuid() == 0:
+        print('"skr --init" must not be run as root')
         exit()
+
+    print("Do you want to save this settings?")
+    print("Config name:",filename+".config")
+    print("KeyboardPath:",keyboard)
+    print("Save settings [y/n]:")
+    selection = input()
+    if selection != "y":
+        print("Cancelling...")
+        exit()
+
+    if os.system("mkdir -p ~/.config/skr") == -1:
+        print("can't create ~/.config/skr")
+        exit()
+
+    # create config file
+
+    configFile = open(skrConfigPath+"/skr.config","w")
+
+    configFile.write("# Auto gen SKR config file\n")
+    configFile.write("# The keyboard that skr will intercept\n")
+    configFile.write("KeyboardPath -> "+keyboard+"\n")
+    configFile.write("\n")
+    configFile.write("# Get a config examples and source code at:\n")
+    configFile.write("#   https://github.com/davrack/skr\n")
+
+    configFile.close()
+    print("Config file created")
+    exit()
 
 skrConfigPath = os.path.expanduser("~/.config/skr")
 configFiles = list(filter(
