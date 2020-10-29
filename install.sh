@@ -1,7 +1,7 @@
 #!/bin/sh
 
 install(){
-    gcc src/core/main.c -o skr
+    gcc src/core/main.c -o skrcore
 
     sudo mkdir -p /usr/share/skr 
     sudo cp -r src/parser /usr/share/skr
@@ -9,6 +9,7 @@ install(){
     gcc src/kid/skrkid.c -o skrkid
     sudo cp skrkid /usr/share/skr
 
+    sudo cp skrcore /usr/share/skr
     sudo cp skr /usr/bin/
 }
 uninstall(){
