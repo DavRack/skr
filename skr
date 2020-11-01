@@ -31,13 +31,15 @@ def keyboardExist(configFile):
 
 def init():
     print("Generating new config file at ~/.config/skr")
+    os.system("sudo echo ")
     print("Type a name for the new config file then press Enter")
     filename = input()
     filename = filename.strip()
     filename = filename.replace(".config","")
     filename = filename.replace(".conf","")
 
-    os.system("sudo echo ")
+    filename = filename+".config"
+
     print("press a key to identify your keyboard then press Enter")
     output = subprocess.run(["sudo","/usr/share/skr/skrkid"],
             stdout=subprocess.PIPE)
@@ -56,9 +58,9 @@ def init():
     if os.getuid() == 0:
         print('"skr --init" must not be run as root')
         exit()
-
+    print("\n\n")
     print("Do you want to save this settings?")
-    print("Config name:",filename+".config")
+    print("Config name:",filename)
     print("KeyboardPath:",keyboard)
     print("Save settings [y/n]:")
     selection = input()
@@ -72,7 +74,7 @@ def init():
 
     # create config file
 
-    configFile = open(skrConfigPath+"/skr.config","w")
+    configFile = open(skrConfigPath+"/"+filename,"w")
 
     configFile.write("# Auto gen SKR config file\n")
     configFile.write("# The keyboard that skr will intercept\n")
