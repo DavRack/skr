@@ -33,7 +33,7 @@ int main(int argc, char *argv[]){
     input = popen(intercept,"r");
     teclado = popen(uinput,"w");
 
-    while (1){
+    while(access(userKeyboard, F_OK) != -1){
         fread(&rawEvent, sizeof(event), 1, input);
         if(rawEvent.type == EV_KEY){
 

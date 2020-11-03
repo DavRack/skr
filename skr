@@ -14,13 +14,17 @@ class GracefulKiller:
   def exit_gracefully(self,signum, frame):
     self.kill_now = True
 
-def keyboardExist(configFile):
+def keyboardPathFromConfig(configFile):
     process = subprocess.Popen(['cat '+skrConfigPath+"/"+configFile+' | grep -m 1 "KeyboardPath"'],
             stdout=subprocess.PIPE,
             universal_newlines=True,
             shell=True)
     path, stderr = process.communicate()
     path = path.split("->")[1].strip()
+    return path
+
+def keyboardExist(configFile):
+    path = keyboardPathFromConfig(configFile)
 
     process = subprocess.Popen(['find /dev/input | grep "'+path+'"'],
             stdout=subprocess.PIPE,
@@ -107,16 +111,27 @@ if len(sys.argv) == 2:
 
 if len(sys.argv) == 1:
     print("Initializing skr")
-    skrInstances = []
-    # create an instance of skrCore for each config file in ~/.config/skr/
-    for configFile in configFiles:
-        if keyboardExist(configFile):
-            skrInstances.append(subprocess.Popen(
-                ["/usr/share/skr/skrcore","-c",skrConfigPath+"/"+configFile]))
-
+    skrInstances = {}
     killer = GracefulKiller()
+    # create an instance of skrCore for each config file in ~/.config/skr/
     while not killer.kill_now:
-        time.sleep(2)
+        for configFile in configFiles:
+            keyboardPath = keyboardPathFromConfig(configFile)
+            if keyboardExist(configFile):
+                if keyboardPath in skrInstances:
+                    if skrInstances[keyboardPath].poll() is not None:
+                        skrInstances[keyboardPath].kill()
+                        skrInstances[keyboardPath] = subprocess.Popen(
+                            ["/usr/share/skr/skrcore",
+                                "-c",
+                                skrConfigPath+"/"+configFile])
+                else:
+                    skrInstances[keyboardPath] = subprocess.Popen(
+                        ["/usr/share/skr/skrcore",
+                            "-c",
+                            skrConfigPath+"/"+configFile])
 
-    for process in skrInstances:
+        time.sleep(1)
+
+    for process in skrInstances.values():
         process.kill()
