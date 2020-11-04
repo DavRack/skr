@@ -1,0 +1,137 @@
+#!/usr/bin/env python3
+import os
+import signal
+import subprocess
+import sys
+import time
+
+class GracefulKiller:
+  kill_now = False
+  def __init__(self):
+    signal.signal(signal.SIGINT, self.exit_gracefully)
+    signal.signal(signal.SIGTERM, self.exit_gracefully)
+
+  def exit_gracefully(self,signum, frame):
+    self.kill_now = True
+
+def keyboardPathFromConfig(configFile):
+    process = subprocess.Popen(['cat '+skrConfigPath+"/"+configFile+' | grep -m 1 "KeyboardPath"'],
+            stdout=subprocess.PIPE,
+            universal_newlines=True,
+            shell=True)
+    path, stderr = process.communicate()
+    path = path.split("->")[1].strip()
+    return path
+
+def keyboardExist(configFile):
+    path = keyboardPathFromConfig(configFile)
+
+    process = subprocess.Popen(['find /dev/input | grep "'+path+'"'],
+            stdout=subprocess.PIPE,
+            universal_newlines=True,
+            shell=True)
+    stdout, stderr = process.communicate()
+    return len(stdout) > 5
+
+def init():
+    print("Generating new config file at ~/.config/skr")
+    os.system("sudo echo ")
+    print("Type a name for the new config file then press Enter")
+    filename = input()
+    filename = filename.strip()
+    filename = filename.replace(".config","")
+    filename = filename.replace(".conf","")
+
+    filename = filename+".config"
+
+    print("press a key to identify your keyboard then press Enter")
+    output = subprocess.run(["sudo","/usr/share/skr/skrkid"],
+            stdout=subprocess.PIPE)
+    input()
+    output = output.stdout.decode('utf-8').split("\n")
+    output = list(filter(lambda x: x != "",output))
+
+    keyboard = ""
+    if len(output) == 1:
+        keyboard = output[0]
+        print("Your keyboard path is:",keyboard)
+    else:
+        print("No keyboard found")
+        sys.exit()
+
+    if os.getuid() == 0:
+        print('"skr --init" must not be run as root')
+        exit()
+    print("\n\n")
+    print("Do you want to save this settings?")
+    print("Config name:",filename)
+    print("KeyboardPath:",keyboard)
+    print("Save settings [y/n]:")
+    selection = input()
+    if selection != "y":
+        print("Cancelling...")
+        exit()
+
+    if os.system("mkdir -p ~/.config/skr") == -1:
+        print("can't create ~/.config/skr")
+        exit()
+
+    # create config file
+
+    configFile = open(skrConfigPath+"/"+filename,"w")
+
+    configFile.write("# Auto gen SKR config file\n")
+    configFile.write("# The keyboard that skr will intercept\n")
+    configFile.write("KeyboardPath -> "+keyboard+"\n")
+    configFile.write("\n")
+    configFile.write("# Get a config examples and source code at:\n")
+    configFile.write("#   https://github.com/davrack/skr\n")
+
+    configFile.close()
+    print("Config file created")
+    exit()
+
+user = os.getenv("USER")
+if user == "root":
+    user = os.getenv("SUDO_USER")
+    if type(user) is not str:
+        user == "root"
+
+skrConfigPath = "/home/"+user+"/.config/skr"
+
+configFiles = list(filter(
+        lambda File: File.endswith(".config"),
+        os.listdir(skrConfigPath)))
+
+if len(sys.argv) == 2:
+    if sys.argv[1] == "--init":
+        init()
+    elif sys.argv[1] == "-h":
+        print("skr help")
+
+if len(sys.argv) == 1:
+    print("Initializing skr")
+    skrInstances = {}
+    killer = GracefulKiller()
+    # create an instance of skrCore for each config file in ~/.config/skr/
+    while not killer.kill_now:
+        for configFile in configFiles:
+            keyboardPath = keyboardPathFromConfig(configFile)
+            if keyboardExist(configFile):
+                if keyboardPath in skrInstances:
+                    if skrInstances[keyboardPath].poll() is not None:
+                        skrInstances[keyboardPath].kill()
+                        skrInstances[keyboardPath] = subprocess.Popen(
+                            ["/usr/share/skr/skrcore",
+                                "-c",
+                                skrConfigPath+"/"+configFile])
+                else:
+                    skrInstances[keyboardPath] = subprocess.Popen(
+                        ["/usr/share/skr/skrcore",
+                            "-c",
+                            skrConfigPath+"/"+configFile])
+
+        time.sleep(1)
+
+    for process in skrInstances.values():
+        process.kill()

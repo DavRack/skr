@@ -1,4 +1,5 @@
 import parserClasses
+import sys
 import os
 
 user = os.getenv("USER")
@@ -7,7 +8,12 @@ if user == "root":
     if type(user) is not str:
         user == "root"
 
-configPath = "/home/"+user+"/.config/skr/skr.config"
+# get the config file to use sended from c
+configPath = ""
+if len(sys.argv) == 2:
+    configPath = sys.argv[1]
+else:
+    print("FAIL can't find config file, to create one run skr --init")
 
 if os.path.exists(configPath):
 
