@@ -1,4 +1,5 @@
 from remapData import keyCodes
+import subprocess
 
 BLANK = -1
 
@@ -80,6 +81,14 @@ class keyboardPathAction(failAction):
         o = ["KeyboardPath",self.path]
         return [' '.join(str(e) for e in o)]
 
+class keyboardNameAction(failAction):
+    def __init__(self,name):
+        self.name = name
+
+    def output(self):
+        o = ["KeyboardPath",kbName2Path(self.name)]
+        return [' '.join(str(e) for e in o)]
+
 class newLayerAction(failAction):
     def __init__(self,key):
         self.keyCode = getKeyCode(key)
@@ -90,6 +99,14 @@ class newLayerAction(failAction):
             return [' '.join(str(e) for e in o)]
         else:
             return ["FAIL"]
+
+def kbName2Path(kbName):
+    command = 'sed -n \'/"'+kbName+'"/,/^$/p\' /proc/bus/input/devices | grep "H:" | grep -o "event\\w*"'
+
+    commandOut = subprocess.getoutput(command)
+    eventName = commandOut.strip()
+
+    return "/dev/input/"+eventName
 
 def isKey(token):
     code = getKeyCode(token)
@@ -205,6 +222,9 @@ def tokenToAction(tokens,hotkey):
 
     if trigger.upper() == "KEYBOARDPATH":
         action = keyboardPathAction(command)
+
+    if trigger.upper() == "KEYBOARDNAME":
+        action = keyboardNameAction(command)
 
     elif trigger.upper() == "NEWLAYER":
         action = newLayerAction(command)
