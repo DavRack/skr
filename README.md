@@ -270,6 +270,11 @@ sudo systemctl start skr.service
 
 + sudo
 
+# Donations
+if you like my work you can send me crypto to these wallets:
+BTC: 17u6NAodc6GrQPRGNy92xF6pmzDFaq2EuC
+ETH: 0xa85c356d396A80Afc49B6B281E4a9a897fdfa152
+
 ### TODO
 
 + MD custom macros
