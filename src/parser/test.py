@@ -64,6 +64,18 @@ class testParser(unittest.TestCase):
 
         self.assertEqual(parsedData,parserClasses.parse(data))
 
+        data = [
+        "KeyboardName -> DavRack Atreus50",
+        ]
+
+         
+        parsedData =[
+        "NewLayer 0",
+        "KeyboardPath /dev/input/event3",
+        ]
+
+        self.assertEqual(parsedData,parserClasses.parse(data))
+
     def test_newLayer(self):
         data = [
         "NewLayer->CapsLock"
