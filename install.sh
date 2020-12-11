@@ -28,14 +28,14 @@ usage(){
 }
 
 if [ "$#" = "0" ];then
-    echo installing skr
+    echo building and installing skr
     build
     install
 elif [ "$1" = "-b" ];then
     echo building skr
     build
 elif [ "$1" = "-i" ];then
-    echo building skr
+    echo installing skr
     install
 
 elif [ "$1" = "-u" ];then
