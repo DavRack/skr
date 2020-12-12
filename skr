@@ -62,11 +62,13 @@ def init():
     if os.getuid() == 0:
         print('"skr --init" must not be run as root')
         exit()
+
     print("\n\n")
     print("Do you want to save this settings?")
     print("Config name:",filename)
     print("KeyboardPath:",keyboard)
     print("Save settings [y/n]:")
+
     selection = input()
     if selection != "y":
         print("Cancelling...")
@@ -77,7 +79,6 @@ def init():
         exit()
 
     # create config file
-
     configFile = open(skrConfigPath+"/"+filename,"w")
 
     configFile.write("# Auto gen SKR config file\n")
@@ -99,10 +100,6 @@ if user == "root":
 
 skrConfigPath = "/home/"+user+"/.config/skr"
 
-configFiles = list(filter(
-        lambda File: File.endswith(".config"),
-        os.listdir(skrConfigPath)))
-
 if len(sys.argv) == 2:
     if sys.argv[1] == "--init":
         init()
@@ -110,11 +107,15 @@ if len(sys.argv) == 2:
         print("skr help")
 
 if len(sys.argv) == 1:
+    configFiles = list(filter(
+            lambda File: File.endswith(".config"),
+            os.listdir(skrConfigPath)))
     print("Initializing skr")
     skrInstances = {}
     killer = GracefulKiller()
-    # create an instance of skrCore for each config file in ~/.config/skr/
+
     while not killer.kill_now:
+        # create an instance of skrCore for each config file in ~/.config/skr/
         for configFile in configFiles:
             keyboardPath = keyboardPathFromConfig(configFile)
             if keyboardExist(configFile):
