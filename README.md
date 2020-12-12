@@ -29,20 +29,13 @@ in general, even works in tty.
 
 #### Arch Linux
 
-Install git and interception-tools from the aur
+Install skr from the aur with the package **skr-git**
 
 > example using [yay](https://github.com/Jguer/yay) AUR helper
 
 ```shell
-yay -S git interception-tools
+yay -S skr-git
 
-```
-
-Install skr
-```shell
-git clone https://github.com/DavRack/skr.git
-cd skr
-./install.sh
 ```
 
 #### Ubuntu 20.04
