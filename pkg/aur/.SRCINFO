@@ -1,0 +1,20 @@
+pkgbase = skr
+	pkgdesc = Low level key remapping
+	pkgver = r111.30fc142
+	pkgrel = 1
+	url = https://github.com/DavRack/skr
+	arch = x86_64
+	arch = arm
+	arch = aarch64
+	license = GPL
+	makedepends = git
+	makedepends = gcc
+	depends = interception-tools
+	depends = sudo
+	depends = python
+	provides = skr
+	source = skr::git://github.com/DavRack/skr
+	md5sums = SKIP
+
+pkgname = skr-git
+
