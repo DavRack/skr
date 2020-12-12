@@ -1,11 +1,12 @@
 <h1 align="center"> Simple Key Remap </h1>
 
-SKR is a low level, low latency way to remap keys to:
+SKR is a low level, low latency way to remap keys. Some of the features of **SKR** are:
 
-+ Other keys
-+ Shell commands or scripts
-+ Sequences of keys, commands and scripts (A.K.A Macros) (needs to be documented but it's there)
++ Remap keys to other keys
++ Remap keys to shell commands or scripts
 + Function Layers
++ Remap keys to sequences of keys, commands and scripts (A.K.A Macros) (needs to be documented but it's there)
++ Multiple keyboard support
 
 SKR sits very low in the keyboard stack just above the kernel so its
 independent of desktop environments, window manager or graphical environments
