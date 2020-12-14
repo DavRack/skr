@@ -1,16 +1,15 @@
-# The path of my laptop leyboard
-# if available /dev/input/by-id paths are prefered becouse that paths dont change after reboot
+# path to laptop keyboard
+# if available, use a path under /dev/input/by-id, so it won't change after reboot
+KeyboardPath -> /dev/input/event3
 
-KeyboardPath->/dev/input/event3
-
-# remap Tab to Esc
+# remap tab to esc
 TAB -> ESC
 
-# swap super and right alt
+# swap super with right alt
 META <-> ALT
 
-# Define a new fnLayer using capsLock as fnKey
-NewLayer->CapsLock
+# Define a new fnLayer using caps lock as fnKey
+NewLayer -> CapsLock
 
     SPACE -> TAB
 
@@ -21,11 +20,10 @@ NewLayer->CapsLock
     L -> RIGHT
 
     # launch ST terminal with the T key
-    # using "&" at the end of the command will prevent the app for clossing if skr is stoped
-
+    # adding "&" to the end will prevent the app from closing if skr is stopped
     T -> Script=st&
 
-    # if you want modifiers inside a layer simply remap them to themselves (or any other key)
+    # if you want a modifier inside a layer simply remap it to itself (or any other key)
     LEFTCTRL -> LEFTCTRL
     RIGHTCTRL -> RIGHTCTRL
     LEFTSHIFT -> LEFTSHIFT

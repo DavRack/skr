@@ -2,15 +2,15 @@
 
 SKR is a low level, low latency way to remap keys. Some of the features of **SKR** are:
 
-+ Remap keys to other keys
-+ Remap keys to shell commands or scripts
++ Remap keys
++ Remap keys to run a shell command or script
++ Remap keys to run a sequences of keys, commands, and scripts (A.K.A Macro) (needs documentation but it's there)
 + Function Layers
-+ Remap keys to sequences of keys, commands and scripts (A.K.A Macros) (needs to be documented but it's there)
 + Multiple keyboard support
 
-SKR sits very low in the keyboard stack just above the kernel so its
-independent of desktop environments, window manager or graphical environments
-in general, even works in tty.
+SKR sits very low in the keyboard stack just above the kernel. Thus, it is
+independent of display protocol, desktop environment, or window manager.
+It even works in tty.
 
 ### Table of Contents
 
@@ -94,10 +94,10 @@ cd skr
 
 ## Configuration
 
-> SKR is configured through **~/.config/skr/skr.config** you can find an
+> SKR is configured through **~/.config/skr/skr.config**. You can find an
 example config file [here](docs/exampleConfig.txt)
 
-Once skr is installed  run:
+Once skr is installed, run:
 
 ```shell
 skr --init
@@ -108,9 +108,9 @@ of the keyboard used to press the key and will create a config file
 
 ### Editing the config file
 
-First we need to define the keyboard path that skr will intercept:
+First we need to define the keyboard path for skr to intercept:
 
-> if you run **skr --init** the keyboard path will be already defined
+> if you ran **skr --init**, the keyboard path will have already been defined
 
 ```conf
 KeyboardPath -> /dev/input/event3
@@ -118,7 +118,7 @@ KeyboardPath -> /dev/input/event3
 
 #### Key remap
 
-A key remap takes one key and convert its to another key and has this syntax:
+A key remap makes a key behave like it is another. It uses the following syntax:
 
 ```conf
 [keyToRemap] -> [targetKey]
@@ -136,13 +136,13 @@ Here's a key code table with all valid key names: [keycode table](docs/keyCodes.
 
 #### Key swap
 
-A Key Swap the function of two keys and has this syntax:
+A key swap remaps two keys to each other. It uses the following syntax:
 
 ```conf
 [Key1] <-> [Key2]
 ```
 
-A key swap its equivalent to two remaps
+This is equivalent to the following remaps
 
 ```conf
 [Key1] -> [Key2]
@@ -159,7 +159,7 @@ META <-> ALT
 
 #### Scripts
 
-SKR can use any key to launch a script or shell command and has this syntax:
+SKR can map a key to a script or shell command. It uses the following syntax:
 
 ```conf
 [KeyToRemap] -> Script=[your command or full path to a script]
@@ -175,20 +175,19 @@ Example: log memory usage to a file located in /tmp/memlog
 
 #### Layers
 
-A Layer is a set of additional key bindings achieved by
-holding down a predefined key on the keyboard, its easier to understand
-with an example:
+A layer is a set of additional key bindings that can be reached by holding down
+a key. It is easier to understand with an example:
 
-Let's say you want to use **H J K L** as arrow keys (vim style), you can set
-capsLock as a fnKey
-so when you hold it down and press H,J,K or L this keys will act as arrow keys,
-but when the fnKey is not press **H J K L** will work normally.
+Let's say you want to use **H J K L** as arrow keys (vim style). You can use
+capsLock as your fnKey
+When you hold it down and press H, J, K, or L they will act as arrow keys.
+When the fnKey is not held, **H J K L** will work normally.
 
 The syntax for layers is:
 
 ```shell
 NewLayer -> [fnKey]
-    # all remaps after NewLayer will activate when [fnKey] is hold down
+    # all remaps after NewLayer will only activate when [fnKey] is held down
 
     # remap 1
 
@@ -210,7 +209,7 @@ NewLayer -> [fnKey2]
     .
 ```
 
-The H J K L as arrows example would look like this on the config file:
+The HJKL example would be written like this:
 
 ```shell
 NewLayer -> CapsLock
@@ -223,9 +222,9 @@ NewLayer -> CapsLock
 
 ##### Some things to keep in mind about layers
 
-+ When a Layer is defined its function key stops working as a normal key
++ When a Layer is defined, its function key stops working as a normal key
 
-+ You can define anything inside a layer: Remaps, Scripts and Macros
++ You can define anything inside a layer: remaps, scripts, and macros
 
 ## Auto start (systemd)
 
@@ -247,13 +246,13 @@ ExecStart=/usr/bin/skr
 WantedBy=multi-user.target
 ```
 
-Then enable the unit running:
+Then enable the unit by running:
 
 ```shell
 sudo systemctl enable skr.service
 ```
 
-this will start the service at boot. to start skr imediatly run:
+This will start the service at boot. To start skr immediately, run:
 
 ```shell
 sudo systemctl start skr.service
@@ -265,7 +264,7 @@ sudo systemctl start skr.service
 + sudo
 
 # Donations
-if you like my work you can send me crypto to these wallets:
+If you like my work you can send me crypto using these wallets:
 
 **BTC: 17u6NAodc6GrQPRGNy92xF6pmzDFaq2EuC**
 
