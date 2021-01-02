@@ -23,7 +23,7 @@ It even works in tty.
   + [Key remap](#key-remap)
   + [Scripts](#scripts)
   + [Layers](#layers)
-+ [Auto start](#auto-start-(systemd))
++ [Auto start](#auto-start-systemd)
 
 
 ## Installation
@@ -234,12 +234,12 @@ To run skr on boot first we need to create a unit file at
 > replace your username where indicated
 ```systemd
 [Unit]
-Description=undervolt
+Description=Low-Level key remapping
 
 [Service]
 User=root
-Environment=USER=putUserNameHere
-Environment=SUDO_USER=putUserNameHere
+Environment=USER=%i
+Environment=SUDO_USER=%i
 ExecStart=/usr/bin/skr
 
 [Install]
