@@ -249,13 +249,13 @@ WantedBy=multi-user.target
 Then enable the unit by running:
 
 ```shell
-sudo systemctl enable skr.service
+sudo systemctl enable skr@username.service
 ```
 
 This will start the service at boot. To start skr immediately, run:
 
 ```shell
-sudo systemctl start skr.service
+sudo systemctl enable --now skr@username.service
 ```
 # Dependencies
 
