@@ -231,7 +231,6 @@ NewLayer -> CapsLock
 To run skr on boot first we need to create a unit file at
 ``/etc/systemd/system/skr.service`` with the following content:
 
-> replace your username where indicated
 ```systemd
 [Unit]
 Description=Low-Level key remapping
@@ -247,6 +246,8 @@ WantedBy=multi-user.target
 ```
 
 Then enable the unit by running:
+
+> replace your username where indicated
 
 ```shell
 sudo systemctl enable skr@username.service
