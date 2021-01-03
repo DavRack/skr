@@ -23,7 +23,7 @@ It even works in tty.
   + [Key remap](#key-remap)
   + [Scripts](#scripts)
   + [Layers](#layers)
-+ [Auto start](#auto-start-(systemd))
++ [Auto start](#auto-start-systemd)
 
 
 ## Installation
@@ -231,15 +231,14 @@ NewLayer -> CapsLock
 To run skr on boot first we need to create a unit file at
 ``/etc/systemd/system/skr.service`` with the following content:
 
-> replace your username where indicated
 ```systemd
 [Unit]
-Description=undervolt
+Description=Low-Level key remapping
 
 [Service]
 User=root
-Environment=USER=putUserNameHere
-Environment=SUDO_USER=putUserNameHere
+Environment=USER=%i
+Environment=SUDO_USER=%i
 ExecStart=/usr/bin/skr
 
 [Install]
@@ -248,14 +247,16 @@ WantedBy=multi-user.target
 
 Then enable the unit by running:
 
+> replace your username where indicated
+
 ```shell
-sudo systemctl enable skr.service
+sudo systemctl enable skr@username.service
 ```
 
 This will start the service at boot. To start skr immediately, run:
 
 ```shell
-sudo systemctl start skr.service
+sudo systemctl enable --now skr@username.service
 ```
 # Dependencies
 
