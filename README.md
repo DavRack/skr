@@ -229,7 +229,7 @@ NewLayer -> CapsLock
 ## Auto start (systemd)
 
 To run skr on boot first we need to create a unit file at
-``/etc/systemd/system/skr.service`` with the following content:
+``/etc/systemd/system/skr@.service`` with the following content:
 
 ```systemd
 [Unit]
