@@ -95,6 +95,8 @@ def init():
 user = os.getenv("USER")
 if user == "root":
     user = os.getenv("SUDO_USER")
+    if not user:
+        user = os.getenv("DOAS_USER") 
     if type(user) is not str:
         user == "root"
 
