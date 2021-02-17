@@ -27,8 +27,8 @@ int main(int argc, char *argv[]){
     // generate shell commands to interact with interception-tools
     char uinput[256];
     char intercept[256];
-    snprintf(uinput,sizeof uinput,"sudo uinput -d %s",userKeyboard);
-    snprintf(intercept,sizeof intercept,"sudo intercept -g %s",userKeyboard);
+    snprintf(uinput,sizeof uinput,"uinput -d %s",userKeyboard);
+    snprintf(intercept,sizeof intercept,"intercept -g %s",userKeyboard);
 
     input = popen(intercept,"r");
     teclado = popen(uinput,"w");
