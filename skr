@@ -108,7 +108,7 @@ if len(sys.argv) == 2:
     elif sys.argv[1] == "-h":
         print("skr help")
 
-if os.getenv("USER") == "root":
+if os.getenv("USER") != "root":
     print("run skr with sudo")
     sys.exit()
 
