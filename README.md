@@ -237,7 +237,7 @@ Description=Low-Level key remapping
 
 [Service]
 User=root
-Environment=USER=%i
+Environment=USER=root
 Environment=SUDO_USER=%i
 ExecStart=/usr/bin/skr
 
