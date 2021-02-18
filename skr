@@ -99,9 +99,6 @@ if user == "root":
         user = os.getenv("DOAS_USER") 
     if type(user) is not str:
         user == "root"
-else:
-    print("run skr with sudo")
-    sys.exit()
 
 skrConfigPath = "/home/"+user+"/.config/skr"
 
@@ -110,6 +107,10 @@ if len(sys.argv) == 2:
         init()
     elif sys.argv[1] == "-h":
         print("skr help")
+
+if os.getenv("USER") == "root":
+    print("run skr with sudo")
+    sys.exit()
 
 if len(sys.argv) == 1:
     configFiles = list(filter(
