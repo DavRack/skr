@@ -4,6 +4,7 @@ import signal
 import subprocess
 import sys
 import time
+from pathlib import Path
 
 class GracefulKiller:
   kill_now = False
@@ -67,7 +68,7 @@ def init():
     print("Do you want to save this settings?")
     print("Config name:",filename)
     print("KeyboardPath:",keyboard)
-    print("Save settings [y/n]:")
+    print("Save settings [y/N]: ", end="")
 
     selection = input()
     if selection != "y":
@@ -100,16 +101,19 @@ if user == "root":
     if type(user) is not str:
         user == "root"
 
-skrConfigPath = "/home/"+user+"/.config/skr"
+skrConfigPath = Path.home()+"/.config/skr"
 
 if len(sys.argv) == 2:
     if sys.argv[1] == "--init":
         init()
-    elif sys.argv[1] == "-h":
+    elif sys.argv[1] == "-h" || sys.argv[1] == "--help":
         print("skr help")
+        print("skr -h        show this message")
+        print("skr --init    generate a new config")
+        print("sudo skr      run skr with known configs applied")
 
-if os.getenv("USER") == "root":
-    print("run skr with sudo")
+if user == "root":
+    print("unable to determine calling user. Please set the USER environment variable to continue.")
     sys.exit()
 
 if len(sys.argv) == 1:
