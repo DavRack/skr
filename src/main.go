@@ -4,6 +4,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"log"
+	"skr/keyboard"
 	"skr/logg"
 )
 
@@ -12,35 +13,30 @@ func main() {
 	logs := logg.New(5)
 
 	keyboardName := "AT Translated Set 2 keyboard"
-	keyboardPath := get_keyboard_path_from_name(keyboardName)
-	keyboardIn := keyboardReader(keyboardPath)
+	keyboardPath := keyboard.PathFromName(keyboardName)
+	keyboardIn := keyboard.EventReader(keyboardPath)
 
-	layers := parse()
+	kb := keyboard.State{}
 
 	fmt.Println("skr")
 	logs.Print(1, "Keyboard path", keyboardPath)
 
-	for keyboard_exist(keyboardPath) {
+	for keyboard.Exist(keyboardPath) {
 		// read rawevent from keyboard
-		binary.Read(keyboardIn, binary.LittleEndian, &rawInput)
+		binary.Read(keyboardIn, binary.LittleEndian, &kb.RawInput)
 
-		if rawInput.Type == keyEvent {
+		if kb.RawInput.IsKeyEvent() {
 			// if a key is pressed we ned to added to pressedKeys to perform
 			// the needed action, but if a key is released we also need to
 			// perform the key action, so we need to remove the key from
 			// pressedKeys after we perform such action
-			if rawInput.Value == keyPressed {
-				pressedKeys = get_press_keys(rawInput, pressedKeys)
+			if kb.KeyIsPress() {
+				kb.PressKeys = kb.GetPressKeys()
 			}
 
-			decided_action = decide_actions(pressedKeys, layers)
-			rawKeys, rawScripts := get_raw_events(decided_action, rawInput)
+			kb.PressKeys = kb.GetPressKeys()
+			logs.Print(5, kb.PressKeys)
 
-			pressedKeys = get_press_keys(rawInput, pressedKeys)
-			logs.Print(5, pressedKeys)
-
-			execute_raw_keys(rawKeys)
-			execute_raw_scripts(rawScripts)
 		}
 	}
 }
