@@ -359,8 +359,11 @@ func TestTable_get_raw_key_events(t *testing.T) {
 }
 
 func TestTable_get_keyboard_path_from_name(t *testing.T) {
-	out := get_keyboard_path_from_name("AT Translated Set 2 keyboard")
-	assert.Equal(t, "/dev/input/event7", out)
+	_, out := get_keyboard_path_from_name("ASUSTeK Computer Inc. N-KEY Device")
+	assert.Equal(t, "/dev/input/event9", out)
+
+	err, out := get_keyboard_path_from_name("none")
+	assert.Error(t, err)
 }
 
 func TestTable_list_has(t *testing.T) {

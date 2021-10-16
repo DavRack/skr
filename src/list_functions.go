@@ -5,20 +5,29 @@ func remove_layer_at(list []layer, index int) []layer {
 }
 
 // remove_uint16_at deletes element at index i
-func remove_uint16_at(list []uint16, index int) []uint16 {
-	if index >= 0 && index < len(list) {
-		return append(list[:index], list[index+1:]...)
+func (pressedKeys KeyCodeList) remove_at(index int) KeyCodeList {
+	if index >= 0 && index < len(pressedKeys) {
+		return append(pressedKeys[:index], pressedKeys[index+1:]...)
 	}
-	return list
+	return pressedKeys
+}
+
+func (pressedKeys KeyCodeList) contains(value KeyCode) bool {
+	for i := 0; i < len(pressedKeys); i++ {
+		if pressedKeys[i] == value {
+			return true
+		}
+	}
+	return false
 }
 
 // delete_uint16 deletes the first instance of value in list
 // and returns a new list with those values
-func delete_uint16(list []uint16, value uint16) []uint16 {
-	for i := 0; i < len(list); i++ {
-		if list[i] == value {
-			return remove_uint16_at(list, i)
+func (pressedKeys KeyCodeList) delete(key KeyCode) KeyCodeList {
+	for i := 0; i < len(pressedKeys); i++ {
+		if pressedKeys[i] == key {
+			return pressedKeys.remove_at(i)
 		}
 	}
-	return list
+	return pressedKeys
 }

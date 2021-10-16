@@ -2,8 +2,8 @@ package main
 
 import (
 	"bufio"
-	"encoding/binary"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"reflect"
@@ -18,13 +18,30 @@ type InputEvent struct {
 }
 
 // values from evdev
-var keyEvent uint16 = 1   // event.type
+var key_event uint16 = 1  // event.type
 var keyPressed int32 = 1  // key state
 var keyReleased int32 = 0 // key state
 
+type KeyCode uint16
+type KeyState int32
+type KeyCodeList []KeyCode
+
+type KeyEvent struct {
+	time     syscall.Timeval
+	keyCode  KeyCode
+	keyState KeyState // press, held, released
+}
+
+// values for KeyEvent
+var pressed KeyState = 1
+var held KeyState = 2
+var released KeyState = 0
+
 type remap struct {
-	trigger      []uint16
-	action       []uint16
+	trigger []uint16
+	action  []uint16
+	// blockKeys lets the user decide if the trigger keys will be blocked
+	// when executing action
 	blockKeys    bool
 	keyEmulation bool
 }
@@ -59,49 +76,60 @@ type raw_script_action struct {
 	post_delay float32
 }
 
+type Keyboard struct {
+	name        string
+	path        string
+	ioReader    io.Reader
+	pressedKeys KeyCodeList
+	lastKey     KeyCode
+}
+
 var decided_action action
 var pressedKeys []uint16
 
 func main() {
-	var raw_input InputEvent
+
+	keyboard := Keyboard{}
+
+	keyboard.name = "ASUSTeK Computer Inc. N-KEY Device"
 
 	// create a process to read raw input data from interception tools
-	keyboard_path := get_keyboard_path_from_name("AT Translated Set 2 keyboard")
-	read_cmd := exec.Command("sudo", "intercept", keyboard_path)
+	_, keyboard.path = get_keyboard_path_from_name(keyboard.name)
+	read_cmd := exec.Command("sudo", "intercept", keyboard.path)
 	read_pipe, _ := read_cmd.StdoutPipe()
 	read_cmd.Start()
 	defer read_cmd.Wait()
 
-	layers := parse()
-
 	fmt.Println("skr")
-	fmt.Println("Keyboard path", keyboard_path)
+	fmt.Println("Keyboard path", keyboard.path)
 
-	keyboard_in := bufio.NewReader(read_pipe)
+	keyboard.ioReader = bufio.NewReader(read_pipe)
 
-	for keyboard_exist(keyboard_path) {
-		// read event from keyboard
-		binary.Read(keyboard_in, binary.LittleEndian, &raw_input)
+	loop(keyboard)
 
-		if raw_input.Type == keyEvent {
-			// if a key is pressed we ned to added to pressedKeys to perform
-			// the needed action, but if a key is released we also need to
-			// perform the key action, so we need to remove the key from
-			// pressedKeys after we perform such action
-			if raw_input.Value == keyPressed {
-				pressedKeys = get_press_keys(raw_input, pressedKeys)
-			}
+	// for keyboard_exist(keyboard_path) {
+	// 	// read event from keyboard
+	// 	binary.Read(keyboard_in, binary.LittleEndian, &raw_input)
 
-			fmt.Println(pressedKeys, raw_input.Value)
-			decided_action = decide_actions(pressedKeys, layers)
-			raw_keys, raw_scripts := get_raw_events(decided_action, raw_input)
+	// 	if raw_input.Type == keyEvent {
+	// 		// if a key is pressed we ned to added to pressedKeys to perform
+	// 		// the needed action, but if a key is released we also need to
+	// 		// perform the key action, so we need to remove the key from
+	// 		// pressedKeys after we perform such action
+	// 		if raw_input.Value == keyPressed {
+	// 			pressedKeys = get_press_keys(raw_input, pressedKeys)
+	// 		}
 
-			execute_raw_keys(raw_keys)
-			execute_raw_scripts(raw_scripts)
+	// 		fmt.Println(pressedKeys, raw_input.Value)
+	// 		decided_action = decide_actions(pressedKeys, layers)
+	// 		raw_keys, raw_scripts := get_raw_events(decided_action, raw_input)
 
-			pressedKeys = get_press_keys(raw_input, pressedKeys)
-		}
-	}
+	// 		execute_raw_keys(raw_keys)
+	// 		execute_raw_scripts(raw_scripts)
+
+	// 		pressedKeys = get_press_keys(raw_input, pressedKeys)
+	// 	}
+	// }
 }
 func execute_raw_keys(raw_keys []raw_key_action) {
 	for _, raw_key := range raw_keys {
@@ -119,26 +147,18 @@ func keyboard_exist(keyboard_path string) bool {
 	return err == nil
 }
 
-func list_uint16_contains(list []uint16, value uint16) bool {
-	for i := 0; i < len(list); i++ {
-		if list[i] == value {
-			return true
-		}
-	}
-	return false
-}
-
-func get_press_keys(key_event InputEvent, pressKeys []uint16) []uint16 {
-	if key_event.Value == keyPressed {
-		if !list_uint16_contains(pressKeys, key_event.Code) {
-			pressKeys = append(pressKeys, key_event.Code)
+func (keyboard Keyboard) get_press_keys(key_event KeyEvent) KeyCodeList {
+	pressedKeys := keyboard.pressedKeys
+	if key_event.keyState == pressed {
+		if !keyboard.pressedKeys.contains(key_event.keyCode) {
+			pressedKeys = append(keyboard.pressedKeys, key_event.keyCode)
 		}
 
-	} else if key_event.Value == keyReleased {
-		pressKeys = delete_uint16(pressKeys, key_event.Code)
+	} else if key_event.keyState == released {
+		pressedKeys = keyboard.pressedKeys.delete(key_event.keyCode)
 
 	}
-	return pressKeys
+	return pressedKeys
 }
 
 func decide_actions(pressKeys []uint16, layers []layer) action {
@@ -198,13 +218,21 @@ func match_keypress_subset(list []uint16, subset []uint16) bool {
 	return true
 }
 
+func (_action action) isEmpty() bool {
+	return reflect.DeepEqual(_action, action{})
+}
+
+func (_remap remap) isEmpty() bool {
+	return reflect.DeepEqual(_remap, remap{})
+}
+
 func get_raw_events(decided_action action, raw_input InputEvent) ([]raw_key_action, []raw_script_action) {
 
-	if reflect.DeepEqual(decided_action, action{}) {
+	if decided_action.isEmpty() {
 		// if theres no selec
 		return []raw_key_action{}, []raw_script_action{}
 
-	} else if !reflect.DeepEqual(decided_action.remap_action, remap{}) {
+	} else if !decided_action.remap_action.isEmpty() {
 		// if action is a remap action
 		raw_key_actions := []raw_key_action{}
 
@@ -220,7 +248,6 @@ func get_raw_events(decided_action action, raw_input InputEvent) ([]raw_key_acti
 				0,
 			}
 			raw_key_actions = append(raw_key_actions, raw_action)
-
 		}
 
 		return raw_key_actions, []raw_script_action{}
