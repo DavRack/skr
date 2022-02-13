@@ -2,53 +2,9 @@ package main
 
 import (
 	"encoding/binary"
-	"errors"
-	"fmt"
-	"os/exec"
-	"strings"
 )
 
 const noBlockDefault bool = false
-
-func get_keyboard_path_from_name(name string) (error, string) {
-
-	command := "sudo sed -n '/" + name + "/,/Handlers/p' /proc/bus/input/devices | grep -o 'event.*' -m 1"
-
-	out, _ := exec.Command("bash", "-c", command).Output()
-	if len(out) == 0 {
-		return errors.New("Keyboard not found"), ""
-	}
-	input_event := strings.TrimSpace(string(out))
-
-	return nil, "/dev/input/" + input_event
-
-}
-
-func pressKey(key interface{}) (ok bool) {
-	keyCode, ok := interfaceToKeyCode(key)
-	if !ok {
-		return
-	}
-	keyEvent := KeyEvent{
-		keyCode:  keyCode,
-		keyState: pressed,
-	}
-	keyEvent.execute()
-	ok = true
-	return
-}
-
-func releaseKey(key interface{}) {
-	keyCode, ok := interfaceToKeyCode(key)
-	if !ok {
-		return
-	}
-	keyEvent := KeyEvent{
-		keyCode:  keyCode,
-		keyState: released,
-	}
-	keyEvent.execute()
-}
 
 func (keyEvent KeyEvent) is(key interface{}) (ok bool) {
 	keyCode, ok := interfaceToKeyCode(key)
@@ -58,22 +14,13 @@ func (keyEvent KeyEvent) is(key interface{}) (ok bool) {
 	return keyEvent.keyCode == keyCode
 }
 
-func (keyEvent KeyEvent) execute() {
-	state := ""
-	if keyEvent.keyState == pressed {
-		state = "keyPressed"
-	}
-	if keyEvent.keyState == released {
-		state = "keyReleased"
-	}
-	if keyEvent.keyState == held {
-		state = "keyHeld"
+func (keyboard *Keyboard) keyRemap(_fromKey interface{}, _toKey interface{}, _blockKey ...bool) (executed bool) {
+	fromKey, ok := interfaceToKeyCode(_fromKey)
+	toKey, ok := interfaceToKeyCode(_toKey)
+	if !ok {
+		return
 	}
 
-	fmt.Println("KeyCode:", keyEvent.keyCode, "Event type:", state)
-}
-
-func (keyboard *Keyboard) keyRemap(fromKey KeyCode, toKey KeyCode, _blockKey ...bool) (executed bool) {
 	blockKey := true
 	if len(_blockKey) > 0 {
 		blockKey = _blockKey[0]
@@ -82,7 +29,7 @@ func (keyboard *Keyboard) keyRemap(fromKey KeyCode, toKey KeyCode, _blockKey ...
 	if keyboard.lastKey.keyCode == fromKey {
 		remapedKey := keyboard.lastKey
 		remapedKey.keyCode = toKey
-		remapedKey.execute()
+		keyboard.execute(remapedKey)
 		keyboard.executeDefaulAction = !blockKey
 		return true
 	}
@@ -112,11 +59,13 @@ func (keyboard Keyboard) get_press_keys(key_event KeyEvent) KeyCodeList {
 	return pressedKeys
 }
 
-func loop(keyboard Keyboard) {
+func loop(keyboard *Keyboard) {
 	var raw_input InputEvent
 	for keyboard.exist() {
 		// read event from keyboard
 		binary.Read(keyboard.ioReader, binary.LittleEndian, &raw_input)
+		// fmt.Printf("time1: %d, time2: %d, Type: %d, Code: %d, Value: %d\n",
+		// 	raw_input.Time.Sec, raw_input.Time.Usec, raw_input.Type, raw_input.Code, raw_input.Value)
 
 		if raw_input.Type == key_event {
 
@@ -137,14 +86,14 @@ func loop(keyboard Keyboard) {
 			keyboard.executeDefaulAction = true
 			keyboard.lastKey = keyEvent
 
-			blockCurrentKey := skrConfig(&keyboard)
+			blockCurrentKey := skrConfig(keyboard)
 
 			if blockCurrentKey {
 				keyboard.executeDefaulAction = false
 			}
 
 			if keyboard.executeDefaulAction {
-				keyEvent.execute()
+				keyboard.execute(keyEvent)
 			}
 
 			keyboard.pressedKeys = keyboard.get_press_keys(keyEvent)

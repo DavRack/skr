@@ -6,9 +6,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestTable_get_keyboard_path_from_name(t *testing.T) {
-	_, out := get_keyboard_path_from_name("ASUSTeK Computer Inc. N-KEY Device")
-	assert.Equal(t, "/dev/input/event9", out)
+func _TestTable_get_keyboard_path_from_name(t *testing.T) {
+	_, out := get_keyboard_path_from_name("Asus Keyboard")
+	assert.Equal(t, "/dev/input/event5", out)
 
 	err, out := get_keyboard_path_from_name("none")
 	assert.Error(t, err)
@@ -31,94 +31,105 @@ func Test_startsWith(t *testing.T) {
 	list2 = KeyCodeList{1}
 	assert.Equal(t, true, list1.startsWith(list2))
 }
+func Test_isActiveEmptyLayer(t *testing.T) {
+	keyboard := Keyboard{}
+	baselayer := keyboard.newLayer("baselayer")
+	keyboard.pressedKeys = KeyCodeList{15}
+	assert.Equal(t,
+		true,
+		keyboard.isActiveLayer(baselayer),
+	)
+}
 
 func Test_isActiveLayer(t *testing.T) {
 	keyboard := Keyboard{}
-	keyboard.layers = []KeyCodeList{
-		{42, 54},
-		{57},
-		{57, 42, 54},
-		{57, 42},
-	}
+
+	l1 := keyboard.newLayer("l1", 42, 54)
+	l2 := keyboard.newLayer("l2", 57)
+	l3 := keyboard.newLayer("l3", 57, 42, 54)
+	l4 := keyboard.newLayer("l4", 57, 42)
 
 	keyboard.pressedKeys = KeyCodeList{57}
 	assert.Equal(t,
 		true,
-		keyboard.isActiveLayer(KeyCodeList{57}),
+		keyboard.isActiveLayer(l2),
 	)
 
 	keyboard.pressedKeys = KeyCodeList{57, 79}
 	assert.Equal(t,
 		true,
-		keyboard.isActiveLayer(KeyCodeList{57}),
+		keyboard.isActiveLayer(l2),
 	)
 
 	keyboard.pressedKeys = KeyCodeList{42, 54}
 	assert.Equal(t,
-		false,
-		keyboard.isActiveLayer(KeyCodeList{57}),
+		true,
+		keyboard.isActiveLayer(l1),
 	)
 
 	keyboard.pressedKeys = KeyCodeList{57, 42, 54}
 	assert.Equal(t,
-		false,
-		keyboard.isActiveLayer(KeyCodeList{57, 42}),
+		true,
+		keyboard.isActiveLayer(l3),
 	)
 
-	keyboard.pressedKeys = KeyCodeList{42, 54}
+	keyboard.pressedKeys = KeyCodeList{57, 42, 25}
 	assert.Equal(t,
-		false,
-		keyboard.isActiveLayer(KeyCodeList{57, 42, 54}),
+		true,
+		keyboard.isActiveLayer(l4),
 	)
 
-	keyboard.pressedKeys = KeyCodeList{42, 54}
+	keyboard.pressedKeys = KeyCodeList{40, 54}
 	assert.Equal(t,
 		false,
-		keyboard.isActiveLayer(KeyCodeList{95, 2, 54}),
+		keyboard.isActiveLayer(l2),
 	)
 }
 
 func Test_getActiveLayer(t *testing.T) {
 	keyboard := Keyboard{}
-	keyboard.layers = []KeyCodeList{
-		{42, 54},
-		{57},
-		{57, 42, 54},
-		{57, 42},
-	}
+	l1 := keyboard.newLayer("l1", 42, 54)
+	l2 := keyboard.newLayer("l2", 57)
+	l3 := keyboard.newLayer("l3", 57, 42, 54)
+	l4 := keyboard.newLayer("l4", 57, 42)
 	keyboard.pressedKeys = KeyCodeList{42, 54}
 	assert.Equal(t,
-		KeyCodeList{42, 54},
+		l1,
 		keyboard.getActiveLayer(),
 	)
 
 	keyboard.pressedKeys = KeyCodeList{40, 54}
 	assert.Equal(t,
-		KeyCodeList{},
+		Layer{},
 		keyboard.getActiveLayer(),
 	)
 
 	keyboard.pressedKeys = KeyCodeList{57, 42, 5}
 	assert.Equal(t,
-		KeyCodeList{57, 42},
+		l4,
 		keyboard.getActiveLayer(),
 	)
 
 	keyboard.pressedKeys = KeyCodeList{57, 42, 54, 10}
 	assert.Equal(t,
-		KeyCodeList{57, 42, 54},
+		l3,
+		keyboard.getActiveLayer(),
+	)
+	keyboard.pressedKeys = KeyCodeList{57, 10}
+	assert.Equal(t,
+		l2,
 		keyboard.getActiveLayer(),
 	)
 }
 
 func Test_blockLayerKeys(t *testing.T) {
 	keyboard := Keyboard{}
-	keyboard.layers = []KeyCodeList{
-		{42, 54},
-		{57, 42, 54},
-		{57, 49, 54},
-		{57, 42},
-		{57},
+	keyboard.layers = Layers{
+		{KeyCodeList{42, 54}, "l1", false},
+		{KeyCodeList{57, 42, 54}, "l3", false},
+		{KeyCodeList{57, 49, 54}, "l31", false},
+		{KeyCodeList{57, 42}, "l4", false},
+		{KeyCodeList{57}, "l2", false},
 	}
 	keyboard.pressedKeys = KeyCodeList{57}
 	assert.Equal(t,
@@ -170,4 +181,34 @@ func Test_keyIs(t *testing.T) {
 	assert.Equal(t, true, key.is("A"))
 	assert.Equal(t, true, key.is(30))
 	assert.Equal(t, false, key.is("B"))
+}
+func Test_createLayer(t *testing.T) {
+	keyboard := Keyboard{}
+	layer := Layer{}
+	layer.name = "baselayer"
+	layer.fnKeys = KeyCodeList{}
+	assert.Equal(t, layer, keyboard.newLayer("baselayer"))
+
+	layer.fnKeys = KeyCodeList{29, 30}
+	layer.name = "t"
+	assert.Equal(t, layer, keyboard.newLayer("t", 29, 30))
+
+	layer.fnKeys = KeyCodeList{29, 30}
+	layer.name = "t2"
+	assert.Equal(t, layer, keyboard.newLayer("t2", "CTRL", "A"))
+}
+
+func Test_interfaceToKeycode(t *testing.T) {
+	code, _ := interfaceToKeyCode(10)
+	assert.Equal(t, KeyCode(10), code)
+
+	code, _ = interfaceToKeyCode("a")
+	assert.Equal(t, KeyCode(30), code)
+}
+func Test_interfacesToKeycodes(t *testing.T) {
+	keyCodes, _ := interfacesToKeyCodes([]interface{}{KeyCodeList{29, 30}})
+	assert.Equal(t, KeyCodeList{29, 30}, keyCodes)
+
+	keyCodes, _ = interfacesToKeyCodes([]interface{}{KeyCodeList{57}})
+	assert.Equal(t, KeyCodeList{57}, keyCodes)
 }

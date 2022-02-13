@@ -1,56 +1,6 @@
 package main
 
-import (
-	"strings"
-)
-
-func interfaceToKeyCode(key interface{}) (keyCode KeyCode, ok bool) {
-	ok = true
-	switch key.(type) {
-	case string:
-		keyCode = KeyName(key.(string)).keyCode()
-		return
-	case int:
-		keyCode = KeyCode(key.(int))
-		return
-	default:
-		ok = false
-		return
-	}
-}
-
-func (key KeyName) keyCode() KeyCode {
-	keyName := strings.ToUpper(string(key))
-	keyCode := keyCodesAlias[keyName]
-	if keyCode != 0 {
-		return keyCode
-	}
-	keyCode = systemKeyCodes[keyName]
-	return keyCode
-}
-
-func (key KeyCode) keyName() KeyName {
-	keyName, ok := mapkey(keyCodesAlias, key)
-	if ok {
-		return KeyName(keyName)
-	}
-	keyName, ok = mapkey(systemKeyCodes, key)
-	if ok {
-		return KeyName(keyName)
-	}
-	return ""
-}
-
-func mapkey(m map[string]KeyCode, value KeyCode) (key string, ok bool) {
-	for k, v := range m {
-		if v == value {
-			key = k
-			ok = true
-			return
-		}
-	}
-	return
-}
+var keyCodes = combine(systemKeyCodes, keyCodesAlias)
 
 var keyCodesAlias = map[string]KeyCode{
 	"SHIFT": 42,
@@ -317,5 +267,3 @@ func combine(a map[string]KeyCode, b map[string]KeyCode) map[string]KeyCode {
 	}
 	return a
 }
-
-var keyCodes = combine(systemKeyCodes, keyCodesAlias)
