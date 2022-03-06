@@ -31,6 +31,7 @@ func Test_startsWith(t *testing.T) {
 	list2 = KeyCodeList{1}
 	assert.Equal(t, true, list1.startsWith(list2))
 }
+
 func Test_isActiveEmptyLayer(t *testing.T) {
 	keyboard := Keyboard{}
 	baselayer := keyboard.newLayer("baselayer")
@@ -182,6 +183,7 @@ func Test_keyIs(t *testing.T) {
 	assert.Equal(t, true, key.is(30))
 	assert.Equal(t, false, key.is("B"))
 }
+
 func Test_createLayer(t *testing.T) {
 	keyboard := Keyboard{}
 	layer := Layer{}
@@ -205,10 +207,23 @@ func Test_interfaceToKeycode(t *testing.T) {
 	code, _ = interfaceToKeyCode("a")
 	assert.Equal(t, KeyCode(30), code)
 }
+
 func Test_interfacesToKeycodes(t *testing.T) {
 	keyCodes, _ := interfacesToKeyCodes([]interface{}{KeyCodeList{29, 30}})
 	assert.Equal(t, KeyCodeList{29, 30}, keyCodes)
 
 	keyCodes, _ = interfacesToKeyCodes([]interface{}{KeyCodeList{57}})
 	assert.Equal(t, KeyCodeList{57}, keyCodes)
+}
+
+func Test_KeyboardEventRead(t *testing.T) {
+	keyboard := keyboardEventIO{}
+	keyboard.inputKeyboardEvents = []KeyboardEvent{
+		mock_keyEvent(30, keyPressed),
+		mock_keyEvent(30, keyReleased),
+	}
+
+	keyboard.read()
+
+	assert.Len(t, keyboard.inputKeyboardEvents, 1)
 }

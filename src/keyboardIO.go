@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"encoding/binary"
 	"errors"
 	"fmt"
@@ -10,8 +11,24 @@ import (
 	"time"
 )
 
-var prev_evt_wrap InputEvent = InputEvent{syscall.Timeval{}, 4, 4, 4}
-var post_evt_wrap InputEvent = InputEvent{syscall.Timeval{}, 0, 0, 0}
+type KeyboardIO interface {
+	read() (KeyboardEvent, error)
+	write(KeyboardEvent) error
+	flush()
+}
+
+type keyboardStdinIO struct {
+	ioReader *bufio.Reader
+	ioWriter *bufio.Writer
+}
+
+type keyboardEventIO struct {
+	inputKeyboardEvents  []KeyboardEvent
+	outputKeyboardEvents []KeyboardEvent
+}
+
+var prev_evt_wrap KeyboardEvent = KeyboardEvent{syscall.Timeval{}, 4, 4, 4}
+var post_evt_wrap KeyboardEvent = KeyboardEvent{syscall.Timeval{}, 0, 0, 0}
 
 func (keyboard *Keyboard) pressKey(key interface{}) (ok bool) {
 	keyCode, ok := interfaceToKeyCode(key)
@@ -73,23 +90,23 @@ func (keyboard *Keyboard) execute(keyEvent KeyEvent) {
 	inputEvent.Time.Sec = sec
 	inputEvent.Time.Usec = usec
 
-	err := binary.Write(keyboard.ioWriter, binary.LittleEndian, &prev_evt_wrap)
+	err := keyboard.IO.write(prev_evt_wrap)
 	if err != nil {
 		fmt.Println(err)
 	}
-	err = binary.Write(keyboard.ioWriter, binary.LittleEndian, &inputEvent)
+	err = keyboard.IO.write(inputEvent)
 	if err != nil {
 		fmt.Println(err)
 	}
-	err = binary.Write(keyboard.ioWriter, binary.LittleEndian, &post_evt_wrap)
+	err = keyboard.IO.write(post_evt_wrap)
 	if err != nil {
 		fmt.Println(err)
 	}
-	keyboard.ioWriter.Flush()
+	keyboard.IO.flush()
 }
 
-func (keyEvent KeyEvent) toInputEvent() (inputEvent InputEvent) {
-	inputEvent = InputEvent{
+func (keyEvent KeyEvent) toInputEvent() (inputEvent KeyboardEvent) {
+	inputEvent = KeyboardEvent{
 		Time:  keyEvent.time,
 		Type:  key_event,
 		Code:  keyEvent.keyCode,
@@ -110,4 +127,66 @@ func get_keyboard_path_from_name(name string) (error, string) {
 
 	return nil, "/dev/input/" + input_event
 
+}
+
+func (keyboard keyboardStdinIO) read() (KeyboardEvent, error) {
+	var raw_input KeyboardEvent
+	binary.Read(keyboard.ioReader, binary.LittleEndian, &raw_input)
+	return raw_input, nil
+}
+
+func (keyboard keyboardStdinIO) write(outputKeyEvent KeyboardEvent) error {
+	err := binary.Write(keyboard.ioWriter, binary.LittleEndian, &outputKeyEvent)
+	return err
+}
+
+func (keyboard keyboardStdinIO) flush() {
+	keyboard.ioWriter.Flush()
+}
+
+func initKeyboardStdinIO(keyboardName string) keyboardStdinIO {
+	var keyboard keyboardStdinIO
+	// create a process to read raw input data from interception tools
+	_, keyboardPath := get_keyboard_path_from_name(keyboardName)
+
+	write_cmd := exec.Command("uinput", "-d", keyboardPath)
+	write_pipe, _ := write_cmd.StdinPipe()
+	write_cmd.Start()
+	defer write_cmd.Wait()
+	ioWriter := bufio.NewWriter(write_pipe)
+
+	read_cmd := exec.Command("intercept", "-g", keyboardPath)
+	read_pipe, _ := read_cmd.StdoutPipe()
+	read_cmd.Start()
+	defer read_cmd.Wait()
+	ioReader := bufio.NewReader(read_pipe)
+
+	keyboard.ioReader = ioReader
+	keyboard.ioWriter = ioWriter
+
+	return keyboard
+}
+
+func (keyboard keyboardEventIO) read() (KeyboardEvent, error) {
+	if len(keyboard.inputKeyboardEvents) == 0 {
+		return KeyboardEvent{}, errors.New("No more input events")
+	}
+	raw_event := keyboard.inputKeyboardEvents[0]
+	keyboard.inputKeyboardEvents = keyboard.inputKeyboardEvents[1:]
+	fmt.Print(keyboard.inputKeyboardEvents)
+	return raw_event, nil
+}
+func (keyboard keyboardEventIO) write(outputKeyEvent KeyboardEvent) error {
+	if outputKeyEvent.Type == key_event {
+		outputEvents := keyboard.outputKeyboardEvents
+		keyboard.outputKeyboardEvents = append(outputEvents, outputKeyEvent)
+	}
+	return nil
+}
+func (keyboard keyboardEventIO) flush() {
+}
+
+func initKeyboardEventIO() keyboardEventIO {
+	var keyboard keyboardEventIO
+	return keyboard
 }

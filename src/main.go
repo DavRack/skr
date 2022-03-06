@@ -1,9 +1,7 @@
 package main
 
 import (
-	"bufio"
 	"os"
-	"os/exec"
 	"syscall"
 )
 
@@ -13,7 +11,7 @@ type KeyCodeList []KeyCode
 type KeyName string
 type KeyState int32
 
-type InputEvent struct {
+type KeyboardEvent struct {
 	Time  syscall.Timeval // time in seconds since epoch
 	Type  EventType       // event type
 	Code  KeyCode         // keycode
@@ -43,8 +41,7 @@ var released KeyState = 0
 
 type Keyboard struct {
 	executeDefaulAction bool
-	ioReader            *bufio.Reader
-	ioWriter            *bufio.Writer
+	IO                  KeyboardIO
 	lastKey             KeyEvent
 	layers              Layers
 	name                string
@@ -56,25 +53,11 @@ type Keyboard struct {
 func main() {
 
 	keyboard := initConfig()
-
-	// create a process to read raw input data from interception tools
-	_, keyboard.path = get_keyboard_path_from_name(keyboard.name)
-
-	write_cmd := exec.Command("uinput", "-d", keyboard.path)
-	write_pipe, _ := write_cmd.StdinPipe()
-	write_cmd.Start()
-	defer write_cmd.Wait()
-	keyboard.ioWriter = bufio.NewWriter(write_pipe)
-
-	read_cmd := exec.Command("intercept", "-g", keyboard.path)
-	read_pipe, _ := read_cmd.StdoutPipe()
-	read_cmd.Start()
-	defer read_cmd.Wait()
-	keyboard.ioReader = bufio.NewReader(read_pipe)
+	keyboard.IO = initKeyboardStdinIO(keyboard.name)
 
 	if keyboard.useConfigFile {
 	} else {
-		loop(&keyboard)
+		loop(&keyboard, skrConfig)
 	}
 }
 

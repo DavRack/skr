@@ -1,9 +1,5 @@
 package main
 
-import (
-	"encoding/binary"
-)
-
 const noBlockDefault bool = false
 
 func (keyEvent KeyEvent) is(key interface{}) (ok bool) {
@@ -59,11 +55,14 @@ func (keyboard Keyboard) get_press_keys(key_event KeyEvent) KeyCodeList {
 	return pressedKeys
 }
 
-func loop(keyboard *Keyboard) {
-	var raw_input InputEvent
+func loop(keyboard *Keyboard, skrConfig func(*Keyboard) bool) {
 	for keyboard.exist() {
 		// read event from keyboard
-		binary.Read(keyboard.ioReader, binary.LittleEndian, &raw_input)
+		raw_input, keyboard, err := keyboard.IO.read()
+
+		if err != nil {
+			break
+		}
 		// fmt.Printf("time1: %d, time2: %d, Type: %d, Code: %d, Value: %d\n",
 		// 	raw_input.Time.Sec, raw_input.Time.Usec, raw_input.Type, raw_input.Code, raw_input.Value)
 
