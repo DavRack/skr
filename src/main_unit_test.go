@@ -215,15 +215,3 @@ func Test_interfacesToKeycodes(t *testing.T) {
 	keyCodes, _ = interfacesToKeyCodes([]interface{}{KeyCodeList{57}})
 	assert.Equal(t, KeyCodeList{57}, keyCodes)
 }
-
-func Test_KeyboardEventRead(t *testing.T) {
-	keyboard := keyboardEventIO{}
-	keyboard.inputKeyboardEvents = []KeyboardEvent{
-		mock_keyEvent(30, keyPressed),
-		mock_keyEvent(30, keyReleased),
-	}
-
-	keyboard.read()
-
-	assert.Len(t, keyboard.inputKeyboardEvents, 1)
-}

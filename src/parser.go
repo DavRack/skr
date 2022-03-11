@@ -27,6 +27,7 @@ func (keyboard *Keyboard) keyRemap(_fromKey interface{}, _toKey interface{}, _bl
 		remapedKey.keyCode = toKey
 		keyboard.execute(remapedKey)
 		keyboard.executeDefaulAction = !blockKey
+		keyboard.someActionExecuted = true
 		return true
 	}
 	return false
@@ -58,13 +59,11 @@ func (keyboard Keyboard) get_press_keys(key_event KeyEvent) KeyCodeList {
 func loop(keyboard *Keyboard, skrConfig func(*Keyboard) bool) {
 	for keyboard.exist() {
 		// read event from keyboard
-		raw_input, keyboard, err := keyboard.IO.read()
+		raw_input, err := keyboard.IO.read()
 
 		if err != nil {
 			break
 		}
-		// fmt.Printf("time1: %d, time2: %d, Type: %d, Code: %d, Value: %d\n",
-		// 	raw_input.Time.Sec, raw_input.Time.Usec, raw_input.Type, raw_input.Code, raw_input.Value)
 
 		if raw_input.Type == key_event {
 
@@ -82,18 +81,12 @@ func loop(keyboard *Keyboard, skrConfig func(*Keyboard) bool) {
 				keyboard.pressedKeys = keyboard.get_press_keys(keyEvent)
 			}
 
+			// reset keyboard state for each new keyboard event
 			keyboard.executeDefaulAction = true
+			keyboard.someActionExecuted = false
 			keyboard.lastKey = keyEvent
 
-			blockCurrentKey := skrConfig(keyboard)
-
-			if blockCurrentKey {
-				keyboard.executeDefaulAction = false
-			}
-
-			if keyboard.executeDefaulAction {
-				keyboard.execute(keyEvent)
-			}
+			skrConfig(keyboard)
 
 			keyboard.pressedKeys = keyboard.get_press_keys(keyEvent)
 		}

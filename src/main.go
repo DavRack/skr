@@ -40,6 +40,7 @@ var held KeyState = 2
 var released KeyState = 0
 
 type Keyboard struct {
+	someActionExecuted  bool
 	executeDefaulAction bool
 	IO                  KeyboardIO
 	lastKey             KeyEvent
