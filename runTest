@@ -1,6 +1,10 @@
 #!/bin/bash
-go test -coverprofile testProfile.tmp ./src > /dev/null
+go test -coverpkg=./... -coverprofile=testProfile.tmp ./... || exit 0
 grep -v "config" testProfile.tmp > testProfile
-go tool cover -html=testProfile
+
+if [ "$1" != "noshow" ]; then
+    go tool cover -html=testProfile
+fi
+
 go tool cover -func=testProfile | grep total
 rm testProfile testProfile.tmp

@@ -1,21 +1,53 @@
-package main
+package keyboard
 
 import (
 	"reflect"
 	"strings"
 )
 
+func stringToKeyCodes(input string) (KeyCodeList, bool) {
+	inputNoSpaces := strings.ReplaceAll(input, " ", "")
+	keys := strings.Split(inputNoSpaces, "+")
+
+	outputKeyCodes := KeyCodeList{}
+
+	for _, key := range keys {
+		keyCode := KeyName(key).KeyCode()
+
+		if keyCode == 0 {
+			return KeyCodeList{}, false
+		}
+
+		outputKeyCodes = append(outputKeyCodes, keyCode)
+	}
+
+	return outputKeyCodes, true
+}
+
 func interfaceToKeyCode(key interface{}) (keyCode KeyCode, ok bool) {
+	keys, ok := interfaceToKeyCodes(key)
+
+	if len(keys) != 1 {
+		return 0, false
+	}
+
+	return keys[0], true
+}
+
+func interfaceToKeyCodes(keys interface{}) (keyCodes KeyCodeList, ok bool) {
 	ok = true
-	switch key.(type) {
+	switch keys.(type) {
 	case string:
-		keyCode = KeyName(key.(string)).keyCode()
+		keyCodes, ok = stringToKeyCodes(keys.(string))
 		return
 	case int:
-		keyCode = KeyCode(key.(int))
+		keyCodes = KeyCodeList{KeyCode(keys.(int))}
 		return
 	case KeyCode:
-		keyCode = key.(KeyCode)
+		keyCodes = KeyCodeList{keys.(KeyCode)}
+		return
+	case KeyCodeList:
+		keyCodes = keys.(KeyCodeList)
 		return
 	default:
 		ok = false
@@ -44,7 +76,7 @@ func interfacesToKeyCodes(keys []interface{}) (keyCodes KeyCodeList, ok bool) {
 	return
 }
 
-func (key KeyName) keyCode() KeyCode {
+func (key KeyName) KeyCode() KeyCode {
 	keyName := strings.ToUpper(string(key))
 	keyCode := keyCodesAlias[keyName]
 	if keyCode != 0 {
@@ -54,7 +86,7 @@ func (key KeyName) keyCode() KeyCode {
 	return keyCode
 }
 
-func (key KeyCode) keyName() KeyName {
+func (key KeyCode) KeyName() KeyName {
 	keyName, ok := mapkey(keyCodesAlias, key)
 	if ok {
 		return KeyName(keyName)

@@ -1,13 +1,14 @@
-package main
+package keyboard
 
 var keyCodes = combine(systemKeyCodes, keyCodesAlias)
 
 var keyCodesAlias = map[string]KeyCode{
-	"SHIFT": 42,
-	"CTRL":  29,
-	"ALT":   56,
-	"META":  125,
-	"SUPER": 125,
+	"ALT":     56,
+	"CTRL":    29,
+	"L_SHIFT": 42,
+	"META":    125,
+	"R_SHIFT": 54,
+	"SUPER":   125,
 }
 var systemKeyCodes = map[string]KeyCode{
 	"RESERVED":         0,
