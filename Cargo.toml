@@ -1,0 +1,15 @@
+[[bin]]
+name = "skr"
+path = "src/main.rs"
+[package]
+name = "rust"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+env_logger = "0.10.0"
+hcl-rs = "0.13.3"
+log = "0.4.17"
+serde = "1.0.155"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
