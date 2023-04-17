@@ -1,14 +1,18 @@
 use std::collections::LinkedList;
 use std::env;
-use log::{error, debug};
-use log;
+use std::fs;
+use std::process::{ChildStdin, ChildStdout};
+use log::debug;
 use env_logger;
+
+use self::config::KeyboardConfig;
 
 mod keyboard_io;
 mod nodes;
 mod config;
 mod actions;
 mod in_conditions;
+mod test;
 
 fn main(){
     let mut args: Vec<String> = env::args().collect();
@@ -20,23 +24,30 @@ fn main(){
     log_builder
         .filter_level(log_level)
         .init();
-    test(args);
-}
 
-fn test(mut args: Vec<String>) {
-    // get the node stack
-    let keyboard_config = config::parse_config_file(args.pop().unwrap());
-    let mut node_stack = vec![keyboard_config.node_tree];
-    let mut active_nodes = vec![];
-
+    let config_file_string = fs::read_to_string(args.pop().unwrap())
+        .expect("Should have been able to read the file");
+    println!("{}",config_file_string);
+    let keyboard_config = config::parse_config_file(config_file_string);
     let mut may_event_reader = keyboard_io::create_kb_event_reader(&keyboard_config.path);
     let mut may_event_writer = keyboard_io::create_kb_event_writer(&keyboard_config.path);
+    keyboard_loop(
+        keyboard_config,
+        may_event_reader.as_mut().expect("Cant open keyboard stdin"),
+        may_event_writer.as_mut().expect("Cant open keyboard stdin"),
+    );
+}
+
+pub fn keyboard_loop(keyboard_config: KeyboardConfig, event_reader: &mut ChildStdout, event_writer: &mut ChildStdin) {
+    // get the node stack
+    let mut node_stack = vec![keyboard_config.node_tree];
+    let mut active_nodes = vec![];
 
     let mut kb_state = keyboard_io::KeyboardState {
         key_event_history: LinkedList::from([]),
         current_pressed_keys: LinkedList::from([]),
-        event_reader: may_event_reader.as_mut().unwrap(),
-        event_writer: may_event_writer.as_mut().unwrap(),
+        event_reader,
+        event_writer,
     };
 
     loop {

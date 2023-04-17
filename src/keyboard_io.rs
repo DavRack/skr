@@ -130,10 +130,10 @@ impl KeyboardState<'_> {
             Err(_) => panic!("error while reading keyboard stdio"),
             _ => (),
         }
-        let (_,ie,_) = unsafe {
+        let (_,input_event,_) = unsafe {
             buffer.align_to::<InputEvent>()
         };
-        return ie[0];
+        return input_event[0];
     }
 }
 

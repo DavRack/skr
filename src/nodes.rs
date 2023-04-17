@@ -1,7 +1,7 @@
 use crate::keyboard_io::KeyboardState;
 use std::any::type_name;
 use std::fmt::Debug;
-use log::{info, debug};
+use log::{debug};
 
 fn get_type<T>(_: &T) -> String{
     let complete_type_name = String::from(type_name::<T>());

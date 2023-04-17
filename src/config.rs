@@ -2,18 +2,15 @@ use crate::keyboard_io::{KeyCode, get_key_code};
 use crate::nodes::Node;
 use crate::actions::{LayerAction,RemapAction,DefaultKeyAction,NoAction};
 use hcl;
-use std::fs;
-use log::{info};
+use log::info;
 
 pub struct KeyboardConfig{
     pub path: String,
     pub node_tree: Node,
 }
 
-pub fn parse_config_file(config_file_path: String) -> KeyboardConfig {
-    let config_string = fs::read_to_string(config_file_path)
-        .expect("Should have been able to read the file");
-    let config: hcl::Value = hcl::from_str(&config_string)
+pub fn parse_config_file(config_file_string: String) -> KeyboardConfig {
+    let config: hcl::Value = hcl::from_str(&config_file_string)
         .expect("The config file has some errors");
 
     let config = config.as_object().expect("The config file has some errors");
@@ -43,7 +40,7 @@ pub fn parse_config_file(config_file_path: String) -> KeyboardConfig {
     return kb_config;
 }
 
-fn recursive_parse_layers(layer_config: &hcl::Map<String,hcl::Value>, layer_name: String) -> Vec<Node>{
+fn recursive_parse_layers(layer_config: &hcl::Map<String,hcl::Value>, _layer_name: String) -> Vec<Node>{
     let mut layer_actions = vec![];
 
     let mut remaps = match layer_config.get("remap") {
