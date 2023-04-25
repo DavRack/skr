@@ -1,6 +1,8 @@
 use std::collections::LinkedList;
 use std::env;
 use std::fs;
+use std::io::Read;
+use std::io::Write;
 use std::process::{ChildStdin, ChildStdout};
 use log::debug;
 use env_logger;
@@ -33,12 +35,12 @@ fn main(){
     let mut may_event_writer = keyboard_io::create_kb_event_writer(&keyboard_config.path);
     keyboard_loop(
         keyboard_config,
-        may_event_reader.as_mut().expect("Cant open keyboard stdin"),
-        may_event_writer.as_mut().expect("Cant open keyboard stdin"),
+        Box::new(may_event_reader),
+        Box::new(may_event_writer),
     );
 }
 
-pub fn keyboard_loop(keyboard_config: KeyboardConfig, event_reader: &mut ChildStdout, event_writer: &mut ChildStdin) {
+pub fn keyboard_loop(keyboard_config: KeyboardConfig, event_reader: Box<dyn Read>, event_writer: Box<dyn Write>) {
     // get the node stack
     let mut node_stack = vec![keyboard_config.node_tree];
     let mut active_nodes = vec![];

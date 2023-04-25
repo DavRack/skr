@@ -30,12 +30,20 @@ pub struct Timeval {
     usec: i64,
 }
 
-# [derive(Debug)]
-pub struct KeyboardState<'a> {
+pub struct KeyboardState {
     pub key_event_history: LinkedList<KeyboardEvent>,
     pub current_pressed_keys: LinkedList<KeyboardEvent>,
-    pub event_reader: &'a mut ChildStdout,
-    pub event_writer: &'a mut ChildStdin,
+    pub event_reader: EventReader,
+    pub event_writer: EventWriter,
+}
+
+type EventReader = Box<dyn Read>;
+type EventWriter = Box<dyn Write>;
+
+impl std::fmt::Debug for KeyboardState {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "key_event_history: {:?}\n current_pressed_keys: {:?}",self.key_event_history, self.current_pressed_keys)
+    }
 }
 
 # [derive(PartialEq,Debug,Copy,Clone)]
@@ -56,7 +64,7 @@ impl KeyboardEvent {
     }
 }
 
-impl KeyboardState<'_> {
+impl KeyboardState{
     pub fn add_keyboard_event_to_history(&mut self, new_kb_event: KeyboardEvent){
         // first node is the most recent one
         self.key_event_history.push_front(new_kb_event);
@@ -164,24 +172,24 @@ unsafe fn any_as_u8_slice<T: Sized>(p: &T) -> &[u8] {
     )
 }
 
-pub fn create_kb_event_writer(kb_path: &String) -> Option<ChildStdin> {
+pub fn create_kb_event_writer(kb_path: &String) -> impl Write {
     return Command::new("uinput")
         .arg("-d")
         .arg(kb_path)
         .stdin(Stdio::piped())
         .spawn()
         .expect("failed to open keyboard")
-        .stdin;
+        .stdin.unwrap();
 }
 
-pub fn create_kb_event_reader(kb_path: &String) -> Option<ChildStdout> {
+pub fn create_kb_event_reader(kb_path: &String) -> impl Read {
     return Command::new("intercept")
         .arg("-g")
         .arg(kb_path)
         .stdout(Stdio::piped())
         .spawn()
         .expect("failed to open keyboard")
-        .stdout;
+        .stdout.unwrap();
 }
 
 pub fn get_key_code(key_name: &str) -> KeyCode {
