@@ -3,7 +3,7 @@ use std::env;
 use std::fs;
 use std::io::Read;
 use std::io::Write;
-use std::process::{ChildStdin, ChildStdout};
+
 use log::debug;
 use env_logger;
 
@@ -31,8 +31,8 @@ fn main(){
         .expect("Should have been able to read the file");
     println!("{}",config_file_string);
     let keyboard_config = config::parse_config_file(config_file_string);
-    let mut may_event_reader = keyboard_io::create_kb_event_reader(&keyboard_config.path);
-    let mut may_event_writer = keyboard_io::create_kb_event_writer(&keyboard_config.path);
+    let may_event_reader = keyboard_io::create_kb_event_reader(&keyboard_config.path);
+    let may_event_writer = keyboard_io::create_kb_event_writer(&keyboard_config.path);
     keyboard_loop(
         keyboard_config,
         Box::new(may_event_reader),

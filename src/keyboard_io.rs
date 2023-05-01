@@ -1,10 +1,10 @@
 use std::collections::LinkedList;
-use std::process::{Command, Stdio, ChildStdout, ChildStdin};
+use std::process::{Command, Stdio};
 use std::io::{Read, Write};
 use std::time::UNIX_EPOCH;
 
-const INPUT_EVENT_SIZE: usize = std::mem::size_of::<KeyboardEvent>();
-const KEYBOARD_EVENT_ID: u16 = 1;
+pub const INPUT_EVENT_SIZE: usize = std::mem::size_of::<KeyboardEvent>();
+pub const KEYBOARD_EVENT_ID: u16 = 1;
 const MAX_HISTORY_SIZE: usize = 256;
 
 pub type KeyCode = u16;
@@ -30,17 +30,14 @@ pub struct Timeval {
     usec: i64,
 }
 
-pub struct KeyboardState {
+pub struct KeyboardState<'a> {
     pub key_event_history: LinkedList<KeyboardEvent>,
     pub current_pressed_keys: LinkedList<KeyboardEvent>,
-    pub event_reader: EventReader,
-    pub event_writer: EventWriter,
+    pub event_reader: Box<dyn Read + 'a>,
+    pub event_writer: Box<dyn Write + 'a>,
 }
 
-type EventReader = Box<dyn Read>;
-type EventWriter = Box<dyn Write>;
-
-impl std::fmt::Debug for KeyboardState {
+impl std::fmt::Debug for KeyboardState<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "key_event_history: {:?}\n current_pressed_keys: {:?}",self.key_event_history, self.current_pressed_keys)
     }
@@ -64,7 +61,7 @@ impl KeyboardEvent {
     }
 }
 
-impl KeyboardState{
+impl <'a> KeyboardState<'a>{
     pub fn add_keyboard_event_to_history(&mut self, new_kb_event: KeyboardEvent){
         // first node is the most recent one
         self.key_event_history.push_front(new_kb_event);
