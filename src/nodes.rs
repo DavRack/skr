@@ -47,7 +47,7 @@ pub trait Action {
 
 }
 
-fn add_to_active_nodes(mut node: Node, mut active_nodes: Vec<Node>) -> Vec<Node>{
+fn add_to_active_nodes(node: Node, mut active_nodes: Vec<Node>) -> Vec<Node>{
     for n in active_nodes.clone() {
         if node.id == n.id {
             return active_nodes;
