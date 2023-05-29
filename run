@@ -1,4 +1,4 @@
 #!/bin/bash
 
-# cargo build --release && sudo sleep 0.1 && sudo RUST_LOG=skr=debug target/debug/skr -c config.hcl
+# cargo build --release && sudo sleep 0.1 && sudo target/release/skr -c config.hcl
 cargo build  && sudo sleep 0.1 && sudo RUST_LOG=skr=debug target/debug/skr -c config.hcl

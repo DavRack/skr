@@ -9,6 +9,15 @@ pub struct KeyboardConfig{
     pub node_tree: Node,
 }
 
+static mut NODE_COUNTER: u32 = 0;
+
+fn get_node_id() -> u32{
+    unsafe {
+        NODE_COUNTER += 1;
+        return NODE_COUNTER;
+    }
+}
+
 pub fn parse_config_file(config_file_string: String) -> KeyboardConfig {
     let config: hcl::Value = hcl::from_str(&config_file_string)
         .expect("The config file has some errors");
@@ -26,6 +35,7 @@ pub fn parse_config_file(config_file_string: String) -> KeyboardConfig {
     let mut child_nodes = recursive_parse_layers(config, String::from("ROOT"));
 
     child_nodes.push(Node{
+        id: get_node_id(),
         action: Box::new(DefaultKeyAction{}),
         childs: vec![],
     });
@@ -33,6 +43,7 @@ pub fn parse_config_file(config_file_string: String) -> KeyboardConfig {
     let kb_config = KeyboardConfig{
         path: String::from(keyboad_path),
         node_tree: Node{
+            id: get_node_id(),
             action: Box::new(NoAction{}),
             childs: child_nodes,
         }
@@ -67,6 +78,7 @@ fn parse_layers(remaps: &hcl::Value) -> Vec<Node>{
             trigger: field_to_key_chord(layer_config,"trigger")
         };
         layer_nodes.push(Node{
+            id: get_node_id(),
             action: Box::new(layer_action),
             childs: recursive_parse_layers(layer_config, layer_name.to_string()),
         });
@@ -79,6 +91,7 @@ fn parse_remaps(remaps: &hcl::Value) -> Vec<Node>{
     let mut actions:Vec<Node> = vec![];
     for remap in remap_array{
         actions.push(Node{
+            id: get_node_id(),
             action: Box::new(create_remap_action(remap)),
             childs: vec![],
         });

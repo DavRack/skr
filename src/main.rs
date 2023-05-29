@@ -14,7 +14,9 @@ mod nodes;
 mod config;
 mod actions;
 mod in_conditions;
+
 mod test;
+mod test_helpers;
 
 fn main(){
     let mut args: Vec<String> = env::args().collect();
@@ -29,7 +31,6 @@ fn main(){
 
     let config_file_string = fs::read_to_string(args.pop().unwrap())
         .expect("Should have been able to read the file");
-    println!("{}",config_file_string);
     let keyboard_config = config::parse_config_file(config_file_string);
     let may_event_reader = keyboard_io::create_kb_event_reader(&keyboard_config.path);
     let may_event_writer = keyboard_io::create_kb_event_writer(&keyboard_config.path);

@@ -12,6 +12,7 @@ fn get_type<T>(_: &T) -> String{
 
 #[derive(Clone)]
 pub struct Node{
+    pub id: u32,
     pub action: Box<dyn Action>,
     pub childs: Vec<Node>
 
@@ -46,45 +47,66 @@ pub trait Action {
 
 }
 
-pub fn execute_node<'a>(mut node_stack: Vec<Node>, mut active_nodes: Vec<Node>, kb_state: &mut KeyboardState) -> (Vec<Node>, Vec<Node>){
-    for (i, active_node) in active_nodes.iter().enumerate() {
-        if active_node.action.in_condition(kb_state){
-            active_node.action.exec(kb_state);
-            return (node_stack,active_nodes);
-        }
-        if active_node.action.out_condition(kb_state){
-            debug!("######################### remove ############################");
-            active_nodes.remove(i);
-            return (node_stack,active_nodes);
+fn add_to_active_nodes(mut node: Node, mut active_nodes: Vec<Node>) -> Vec<Node>{
+    for n in active_nodes.clone() {
+        if node.id == n.id {
+            return active_nodes;
         }
     }
+    active_nodes.push(node);
+    return active_nodes;
+}
 
+pub fn execute_node<'a>(mut node_stack: Vec<Node>, mut active_nodes: Vec<Node>, kb_state: &mut KeyboardState) -> (Vec<Node>, Vec<Node>){
     let current_node = node_stack.last().unwrap();
 
+    // test if we have to remove the current layer node
     let current_node_action = &current_node.action;
-    current_node_action.exec(kb_state);
-
     if current_node_action.out_condition(kb_state) {
+        debug!("out condition true");
         node_stack.pop();
         return (node_stack,active_nodes);
     }
 
+    // test if we have to add some node to node stack
     let node_childs = current_node.childs.to_vec();
     for child_node in node_childs {
+        if child_node.childs.len() == 0 {
+            // if child_node has no child_nodes, then isn't a layer
+            continue;
+        }
         if child_node.action.in_condition(kb_state) {
-            let node_action = &child_node.action;
-            node_action.exec(kb_state);
+            node_stack.push(child_node);
+            return (node_stack,active_nodes);
+        }
+    }
 
-            if child_node.action.out_condition(kb_state){
-                // dont add the node to stack if the out condition is satisfied
-                return (node_stack,active_nodes);
-            }
+    // check if some action node is activated and then add thad node to active_nodes
+    let node_childs = current_node.childs.to_vec();
+    for child_node in node_childs {
+        if child_node.childs.len() > 0 {
+            // if child_node has child_nodes, then its a layer, not an action node
+            continue;
+        }
 
-            if child_node.childs.len() > 0 {
-                node_stack.push(child_node);
-            }else{
-                active_nodes.push(child_node);
-            }
+        if child_node.action.in_condition(kb_state) {
+            active_nodes = add_to_active_nodes(child_node, active_nodes);
+        }
+    }
+
+    // execute active nodes
+    for (i, active_node) in active_nodes.clone().iter().enumerate() {
+        let in_condition = active_node.action.in_condition(kb_state);
+        let out_condition = active_node.action.out_condition(kb_state);
+
+        if out_condition {
+            active_nodes.remove(i);
+            active_node.action.exec(kb_state);
+            return (node_stack,active_nodes);
+        }
+
+        if in_condition {
+            active_node.action.exec(kb_state);
             return (node_stack,active_nodes);
         }
     }
