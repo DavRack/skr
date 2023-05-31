@@ -6,7 +6,6 @@ use std::io::Write;
 use crate::{config, nodes};
 use crate::config::KeyboardConfig;
 use crate::keyboard_io;
-use crate::keyboard_io::KeyState::{Pressed, Released};
 use crate::keyboard_io::{InputEvent, KeyboardState};
 
 

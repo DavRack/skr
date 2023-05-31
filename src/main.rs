@@ -15,8 +15,8 @@ mod config;
 mod actions;
 mod in_conditions;
 
-mod test;
-mod test_helpers;
+#[cfg(test)]
+mod tests;
 
 fn main(){
     let mut args: Vec<String> = env::args().collect();
