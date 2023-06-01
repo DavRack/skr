@@ -3,6 +3,7 @@ use std::io::BufReader;
 use std::io::Read;
 use std::io::Write;
 
+use crate::nodes::Node;
 use crate::{config, nodes};
 use crate::config::KeyboardConfig;
 use crate::keyboard_io;
@@ -36,7 +37,7 @@ pub fn output_events_to_mock(output_events: Vec<u8>) -> Vec<MockKbEvent>{
         .collect();
     return keyboard_events;
 }
-fn keyboard_loop(keyboard_config: KeyboardConfig, event_reader: Box<dyn Read + '_>, event_writer: Box<dyn Write + '_>, event_count: usize) {
+fn keyboard_loop(keyboard_config: KeyboardConfig, event_reader: Box<dyn Read + '_>, event_writer: Box<dyn Write + '_>, event_count: usize) -> (Vec<Node>, Vec<Node>){
     // get the node stack
     let mut node_stack = vec![keyboard_config.node_tree];
     let mut active_nodes = vec![];
@@ -60,8 +61,10 @@ fn keyboard_loop(keyboard_config: KeyboardConfig, event_reader: Box<dyn Read + '
         (node_stack, active_nodes) = nodes::execute_node(node_stack, active_nodes, &mut kb_state);
         kb_state.remove_from_current_presed_key(current_key);
     }
+
+    return (node_stack, active_nodes);
 }
-pub fn setup(mock_keyboard_events: Vec<MockKbEvent>, config_file_string: &str) -> Vec<u8>{
+pub fn setup(mock_keyboard_events: Vec<MockKbEvent>, config_file_string: &str) -> (Vec<u8>, Vec<Node>, Vec<Node>){
     let keyboard_config = config::parse_config_file(String::from(config_file_string));
     let dummy_input_events = Vec::new();
     let mut input_events = Vec::new();
@@ -82,11 +85,11 @@ pub fn setup(mock_keyboard_events: Vec<MockKbEvent>, config_file_string: &str) -
     let may_event_writer = output_events.by_ref();
 
 
-    keyboard_loop(
+    let (node_stack, active_nodes) = keyboard_loop(
         keyboard_config,
         Box::new(may_event_reader),
         Box::new(may_event_writer),
         mock_keyboard_events.len()*3, // 3 events per key stroke
     );
-    return output_events;
+    return (output_events, node_stack, active_nodes);
 }

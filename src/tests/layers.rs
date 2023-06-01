@@ -41,7 +41,7 @@ fn test_simple_layer_remap(){
         MockKbEvent{key_code: 35, key_state: Pressed},
         MockKbEvent{key_code: 35, key_state: Released},
     ];
-    let output_events = setup(mock_keyboard_events, config_file_string);
+    let (output_events,_,_) = setup(mock_keyboard_events, config_file_string);
     assert_eq!(spected_events, output_events_to_mock(output_events))
 }
 
@@ -89,6 +89,6 @@ fn test_simple_erlier_release_remap(){
         MockKbEvent{key_code: 35, key_state: Pressed},
         MockKbEvent{key_code: 35, key_state: Released},
     ];
-    let output_events = setup(mock_keyboard_events, config_file_string);
+    let (output_events,_,_) = setup(mock_keyboard_events, config_file_string);
     assert_eq!(spected_events, output_events_to_mock(output_events))
 }

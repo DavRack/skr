@@ -1,6 +1,6 @@
 use crate::keyboard_io::{KeyCode, get_key_code};
 use crate::nodes::Node;
-use crate::actions::{LayerAction,RemapAction,DefaultKeyAction,NoAction};
+use crate::actions::{LayerAction,RemapAction,DefaultKeyAction,NoAction, SwapAction};
 use hcl;
 use log::info;
 
@@ -58,12 +58,17 @@ fn recursive_parse_layers(layer_config: &hcl::Map<String,hcl::Value>, _layer_nam
         Some(remaps) => parse_remaps(remaps),
         _ => vec![]
     };
+    let mut swaps = match layer_config.get("swap") {
+        Some(swaps) => parse_swaps(swaps),
+        _ => vec![]
+    };
     let mut layers = match layer_config.get("layer") {
         Some(layers) => parse_layers(layers),
         _ => vec![]
     };
 
     layer_actions.append(&mut remaps);
+    layer_actions.append(&mut swaps);
     layer_actions.append(&mut layers);
     return layer_actions
 }
@@ -97,6 +102,26 @@ fn parse_remaps(remaps: &hcl::Value) -> Vec<Node>{
         });
     }
     return actions;
+}
+fn parse_swaps(remaps: &hcl::Value) -> Vec<Node>{
+    let swap_array = normalize_to_array(remaps);
+    let mut actions:Vec<Node> = vec![];
+    for swap in swap_array{
+        actions.push(Node{
+            id: get_node_id(),
+            action: Box::new(create_swap_action(swap)),
+            childs: vec![],
+        });
+    }
+    return actions;
+}
+fn create_swap_action(swap: hcl::Value) -> SwapAction{
+    let remap_values = swap.as_object().expect("Cant open remap object");
+    let action = SwapAction{
+        from: field_to_key_chord(remap_values, "from"),
+        to: field_to_key_chord(remap_values, "to")
+    };
+    return action;
 }
 
 fn create_remap_action(remap: hcl::Value) -> RemapAction{

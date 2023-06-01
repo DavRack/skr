@@ -91,6 +91,7 @@ pub fn execute_node<'a>(mut node_stack: Vec<Node>, mut active_nodes: Vec<Node>, 
 
         if child_node.action.in_condition(kb_state) {
             active_nodes = add_to_active_nodes(child_node, active_nodes);
+            break;
         }
     }
 
