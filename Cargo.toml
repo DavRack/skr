@@ -6,6 +6,7 @@ path = "src/main.rs"
 name = "rust"
 version = "0.1.0"
 edition = "2021"
+rust-version = "1.70"
 
 [dependencies]
 clap = { version = "4.3.0", features = ["derive"] }
