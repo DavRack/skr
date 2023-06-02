@@ -1,5 +1,4 @@
 use std::collections::LinkedList;
-use std::env;
 use std::fs;
 use std::io::Read;
 use std::io::Write;
@@ -15,21 +14,45 @@ mod config;
 mod actions;
 mod in_conditions;
 
+use clap::Parser;
+
+/// Simple Key Remap
+#[derive(Parser, Debug)]
+#[command(author, about, long_about = None)]
+struct Args {
+    /// Path to the config file
+    #[arg(short, long, conflicts_with = "innit", default_value = "", id = "/absolute/path/to/config/file.hcl")]
+    config_file: String,
+
+    /// Initialize config file
+    #[arg(long, name = "innit")]
+    innit: bool,
+
+    /// Initialize config file
+    #[arg(long, default_value = "off", id = "off|error|warn|info|debug|trace")]
+    log_level: log::LevelFilter
+}
+
 #[cfg(test)]
 mod tests;
 
 fn main(){
-    let mut args: Vec<String> = env::args().collect();
-    println!("Starting SKR {:?}", args);
+    let args = Args::parse();
 
-    let log_level = log::LevelFilter::Debug;
+    print!("{:?}", args);
+
 
     let mut log_builder = env_logger::Builder::new();
     log_builder
-        .filter_level(log_level)
+        .filter_level(args.log_level)
         .init();
 
-    let config_file_string = fs::read_to_string(args.pop().unwrap())
+    run_remap(args);
+}
+
+fn run_remap(args: Args){
+
+    let config_file_string = fs::read_to_string(args.config_file)
         .expect("Should have been able to read the file");
     let keyboard_config = config::parse_config_file(config_file_string);
     let may_event_reader = keyboard_io::create_kb_event_reader(&keyboard_config.path);
