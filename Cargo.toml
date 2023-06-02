@@ -1,6 +1,7 @@
 [[bin]]
 name = "skr"
 path = "src/main.rs"
+
 [package]
 name = "rust"
 version = "0.1.0"
@@ -9,6 +10,7 @@ edition = "2021"
 [dependencies]
 clap = { version = "4.3.0", features = ["derive"] }
 env_logger = "0.10.0"
+evdev-rs = "0.6.1"
 hcl-rs = "0.13.3"
 log = "0.4.17"
 serde = "1.0.155"

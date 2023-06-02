@@ -7,12 +7,14 @@ use log::debug;
 use env_logger;
 
 use self::config::KeyboardConfig;
+use self::innit::innit_app;
 
 mod keyboard_io;
 mod nodes;
 mod config;
 mod actions;
 mod in_conditions;
+mod innit;
 
 use clap::Parser;
 
@@ -39,15 +41,17 @@ mod tests;
 fn main(){
     let args = Args::parse();
 
-    print!("{:?}", args);
-
-
     let mut log_builder = env_logger::Builder::new();
     log_builder
         .filter_level(args.log_level)
         .init();
 
-    run_remap(args);
+    if args.innit {
+    println!("{:?}",args);
+        innit_app();
+    }else{
+        run_remap(args);
+    }
 }
 
 fn run_remap(args: Args){
